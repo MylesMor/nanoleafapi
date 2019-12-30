@@ -9,9 +9,9 @@ __Detailed package documentation__: https://mylesmor.dev/modules/nanoleafapi.htm
 1. [Installation](#Installation)
 2. [Prerequisites](#Prerequisites)
 3. [Usage](#Usage)
-  * [Methods](#Methods)
-  * [Effects](#Effects)
-  * [Events](#Events)
+   * [Methods](#Methods)
+   * [Effects](#Effects)
+   * [Events](#Events)
 
 ## Installation
 To install the latest stable release:
