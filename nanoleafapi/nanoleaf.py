@@ -413,6 +413,7 @@ class Nanoleaf():
             3 = effects,
             4 = touch (Canvas only)
         """
+
         if self.already_registered:
             print("Cannot register events more than once.")
             return
@@ -433,7 +434,11 @@ class Nanoleaf():
             url = self.url + "/events?id="
             for e in event_types:
                 url += str(e) + ","
-            messages = SSEClient(url[:-1])
-            for msg in messages:
-                func(json.loads(msg))
+            try:
+                messages = SSEClient(url[:-1])
+                for msg in messages:
+                    func(json.loads(str(msg)))
+            except Exception as e:
+                print("Events stream failed.")
+                inner()
         return inner()
