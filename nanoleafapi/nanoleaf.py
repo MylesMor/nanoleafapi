@@ -41,6 +41,7 @@ class Nanoleaf():
         self.url = "http://" + ip + ":16021/api/v1/" + str(auth_token)
         self.auth_token = auth_token
         self.print_errors = print_errors
+        self.already_registered = False
 
     def __error_check(self, code):
         """Checks and displays error messages
@@ -345,14 +346,20 @@ class Nanoleaf():
     #######################################################
 
     def get_current_effect(self):
-        """Returns the currently selected effect"""
+        """Returns the currently selected effect
+
+        If the name of the effect isn't available, this will return
+        *Solid*, *Dynamic* or *Static* instead.
+
+        :returns: Name of the effect or type if unavailable.
+        """
         r = requests.get(self.url + "/effects/select")
         return json.loads(r.text)
 
-    def set_effect(self, effect):
+    def set_effect(self, effect_name):
         """Sets the effect of the lights
 
-        :param effect: The name of the effect
+        :param effect_name: The name of the effect
 
         :returns: True if successful, otherwise False
         """
@@ -365,10 +372,10 @@ class Nanoleaf():
         r = requests.get(self.url + "/effects/effectsList")
         return json.loads(r.text)
 
-    def effect_exists(self, effect):
+    def effect_exists(self, effect_name):
         """Verifies whether an effect exists
 
-        :param effect: Name of the effect to verify
+        :param effect_name: Name of the effect to verify
 
         :returns: True if effect exists, otherwise False
         """
@@ -393,8 +400,12 @@ class Nanoleaf():
     def register_event(self, func, event_types):
         """Starts a thread to register and listen for events
 
+        Creates an event listener. This method can only be called once per
+        program run due to API limitations.
+
         :param func: The function to run when an event is recieved (this
-            should be defined by the user with one argument)
+            should be defined by the user with one argument). This function
+            will recieve the event as a dictionary.
         :param event_types: A list containing up to 4 numbers from
             1-4 corresponding to the relevant events to be registered for.
             1 = state (power/brightness),
@@ -402,12 +413,16 @@ class Nanoleaf():
             3 = effects,
             4 = touch (Canvas only)
         """
+        if self.already_registered:
+            print("Cannot register events more than once.")
+            return
         if len(event_types) > 4 or len(event_types) < 1:
             raise Exception("The number of events to register for must be" +
                 "between 1-4")
         for e in event_types:
             if e < 1 or e > 4:
                 raise Exception("Valid event types must be between 1-4")
+        self.already_registered = True
         t = Thread(target=self.__event_listener, args=(func, event_types))
         t.start()
 
@@ -420,5 +435,5 @@ class Nanoleaf():
                 url += str(e) + ","
             messages = SSEClient(url[:-1])
             for msg in messages:
-                func(msg)
+                func(json.loads(msg))
         return inner()
