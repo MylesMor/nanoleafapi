@@ -13,6 +13,7 @@ LIGHT_BLUE = (173, 216, 230)
 BLUE = (0, 0, 255)
 PINK = (255, 192, 203)
 PURPLE = (128, 0, 128)
+WHITE = (255, 255, 255)
 
 class Nanoleaf():
     """The Nanoleaf class for controlling the Light Panels and Canvas
@@ -41,7 +42,7 @@ class Nanoleaf():
         self.auth_token = auth_token
         self.print_errors = print_errors
 
-    def error_check(self, code):
+    def __error_check(self, code):
         """Checks and displays error messages
 
         Determines the request status code and prints the error, if print_errors
@@ -92,7 +93,7 @@ class Nanoleaf():
             self.url = "http://" + self.ip + ":16021/api/v1/" + str(self.auth_token)
             return True
         else:
-            return self.error_check(r.status_code)
+            return self.__error_check(r.status_code)
 
 
     def delete_user(self, auth_token):
@@ -108,7 +109,7 @@ class Nanoleaf():
         """
         url = "http://" + self.ip + ":16021/api/v1/" + str(auth_token)
         r = requests.delete(url)
-        return self.error_check(r.status_code)
+        return self.__error_check(r.status_code)
 
     def get_panel_info(self):
         """Returns a dictionary of device information"""
@@ -126,7 +127,7 @@ class Nanoleaf():
         """
         data = {"on" : {"value": False}}
         r = requests.put(self.url + "/state", data=json.dumps(data))
-        return self.error_check(r.status_code)
+        return self.__error_check(r.status_code)
 
     def power_on(self):
         """Powers on the lights
@@ -135,7 +136,7 @@ class Nanoleaf():
         """
         data = {"on" : {"value": True}}
         r = requests.put(self.url + "/state", data=json.dumps(data))
-        return self.error_check(r.status_code)
+        return self.__error_check(r.status_code)
 
     def get_power(self):
         """Returns the power status of the lights
@@ -145,6 +146,13 @@ class Nanoleaf():
         r = requests.get(self.url + "/state/on")
         ans = json.loads(r.text)
         return ans['value']
+
+    def toggle_power(self):
+        """Toggles the lights on/off"""
+        if self.get_power():
+            self.power_off()
+        else:
+            self.power_on()
 
     #######################################################
     ####                   COLOUR                      ####
@@ -169,7 +177,7 @@ class Nanoleaf():
                     "brightness": {"value": final_colour[2], "duration": 0}
                 }
         r = requests.put(self.url + "/state", data=json.dumps(data))
-        return self.error_check(r.status_code)
+        return self.__error_check(r.status_code)
 
     #######################################################
     ####               ADJUST BRIGHTNESS               ####
@@ -187,7 +195,7 @@ class Nanoleaf():
             raise Exception('Brightness should be between 0 and 100')
         data = {"brightness" : {"value": brightness, "duration": duration}}
         r = requests.put(self.url + "/state", data=json.dumps(data))
-        return self.error_check(r.status_code)
+        return self.__error_check(r.status_code)
 
     def increment_brightness(self, brightness):
         """Increments the brightness of the lights
@@ -199,7 +207,7 @@ class Nanoleaf():
         """
         data = {"brightness" : {"increment": brightness}}
         r = requests.put(self.url + "/state", data = json.dumps(data))
-        return self.error_check(r.status_code)
+        return self.__error_check(r.status_code)
 
     def get_brightness(self):
         """Returns the current brightness value of the lights"""
@@ -217,7 +225,7 @@ class Nanoleaf():
         :returns: True if successful, otherwise False
         """
         r = requests.put(self.url + "/identify")
-        return self.error_check(r.status_code)
+        return self.__error_check(r.status_code)
 
     #######################################################
     ####                    HUE                        ####
@@ -234,7 +242,7 @@ class Nanoleaf():
             raise Exception('Hue should be between 0 and 360')
         data = {"hue" : {"value" : value}}
         r = requests.put(self.url + "/state", data=json.dumps(data))
-        return self.error_check(r.status_code)
+        return self.__error_check(r.status_code)
 
     def increment_hue(self, value):
         """Increments the hue of the lights
@@ -245,7 +253,7 @@ class Nanoleaf():
         """
         data = {"hue" : {"increment" : value}}
         r = requests.put(self.url + "/state", data=json.dumps(data))
-        return self.error_check(r.status_code)
+        return self.__error_check(r.status_code)
 
     def get_hue(self):
         """Returns the current hue value of the lights"""
@@ -268,7 +276,7 @@ class Nanoleaf():
             raise Exception('Saturation should be between 0 and 100')
         data = {"sat" : {"value" : value}}
         r = requests.put(self.url + "/state", data=json.dumps(data))
-        return self.error_check(r.status_code)
+        return self.__error_check(r.status_code)
 
     def increment_saturation(self, value):
         """Increments the saturation of the lights
@@ -280,7 +288,7 @@ class Nanoleaf():
         """
         data = {"sat" : {"increment" : value}}
         r = requests.put(self.url + "/state", data=json.dumps(data))
-        return self.error_check(r.status_code)
+        return self.__error_check(r.status_code)
 
     def get_saturation(self):
         """Returns the current saturation value of the lights"""
@@ -303,7 +311,7 @@ class Nanoleaf():
             raise Exception('Brightness should be between 1200 and 6500')
         data = {"ct" : {"value" : value}}
         r = requests.put(self.url + "/state", json.dumps(data))
-        return self.error_check(r.status_code)
+        return self.__error_check(r.status_code)
 
     def increment_color_temp(self, value):
         """Sets the white colour temperature of the lights
@@ -315,7 +323,7 @@ class Nanoleaf():
         """
         data = {"ct" : {"increment" : value}}
         r = requests.put(self.url + "/state", json.dumps(data))
-        return self.error_check(r.status_code)
+        return self.__error_check(r.status_code)
 
     def get_color_temp(self):
         """Returns the current colour temperature of the lights"""
@@ -350,7 +358,7 @@ class Nanoleaf():
         """
         data = {"select": effect}
         r = requests.put(self.url + "/effects", data=json.dumps(data))
-        return self.error_check(r.status_code)
+        return self.__error_check(r.status_code)
 
     def list_effects(self):
         """Returns a list of available effects"""
