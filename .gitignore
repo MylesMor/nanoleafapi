@@ -1,2 +1,4 @@
 /docs
 /nanoleafapi/__pycache__
+/dist
+/nanoleafapi.egg-info
