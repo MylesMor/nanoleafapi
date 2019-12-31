@@ -9,7 +9,7 @@ __Detailed package documentation__: https://mylesmor.dev/modules/nanoleafapi.htm
 
 ## Updates
 
-__31/12/19__: Fixed issue with python dependencies not being installed in version ``1.0.2``. Please upgrade your version with `pip install nanoleafapi --upgrade`.
+__31/12/19__: As of package version `1.0.2`, the issue regarding not installing the correct dependencies has been fixed. Please upgrade your version with `pip install nanoleafapi --upgrade`.
 
 # Table of Contents
 1. [Installation](#Installation)
