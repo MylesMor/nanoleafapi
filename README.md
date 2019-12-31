@@ -1,7 +1,7 @@
 [![PyPI version](https://badge.fury.io/py/nanoleafapi.svg)](https://badge.fury.io/py/nanoleafapi)
 
 # nanoleafapi
-__nanoleafapi__ is a Python 3 wrapper for controlling the Nanoleaf OpenAPI. It supports both the Light Panels (previous Aurora) and Canvas.
+__nanoleafapi__ is a Python 3 wrapper for controlling the Nanoleaf OpenAPI. It supports both the Light Panels (previously Aurora) and Canvas.
 
 __Nanoleaf API__: https://forum.nanoleaf.me/docs/openapi
 
