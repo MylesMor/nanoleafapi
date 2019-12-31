@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="nanoleafapi", # Replace with your own username
-    version="1.0.1",
+    version="1.0.2",
     author="Myles Morgan",
     author_email="hello@mylesmor.dev",
     description="A Python 3 wrapper for the Nanoleaf OpenAPI, " +
@@ -14,6 +14,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/MylesMor/nanoleafapi",
     packages=setuptools.find_packages(),
+    install_requires=['requests', 'sseclient'],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
