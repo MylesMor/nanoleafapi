@@ -4,8 +4,8 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="nanoleafapi", # Replace with your own username
-    version="1.0.2",
+    name="nanoleafapi",
+    version="1.0.3",
     author="Myles Morgan",
     author_email="hello@mylesmor.dev",
     description="A Python 3 wrapper for the Nanoleaf OpenAPI, " +

@@ -42,6 +42,12 @@ class Nanoleaf():
         self.auth_token = auth_token
         self.print_errors = print_errors
         self.already_registered = False
+        try:
+            self.__check_connection()
+        except:
+            raise Exception("No valid Nanoleaf device found on IP: " + self.ip)
+
+
 
     def __error_check(self, code):
         """Checks and displays error messages
@@ -111,6 +117,10 @@ class Nanoleaf():
         url = "http://" + self.ip + ":16021/api/v1/" + str(auth_token)
         r = requests.delete(url)
         return self.__error_check(r.status_code)
+
+    def __check_connection(self):
+        """Ensures there is a valid connection"""
+        requests.get(self.url, timeout=5)
 
     def get_panel_info(self):
         """Returns a dictionary of device information"""
