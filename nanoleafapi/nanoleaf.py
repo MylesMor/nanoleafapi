@@ -446,9 +446,9 @@ class Nanoleaf():
                 url += str(e) + ","
             try:
                 messages = SSEClient(url[:-1])
-                for msg in messages:
-                    func(json.loads(str(msg)))
             except Exception as e:
                 print("Events stream failed.")
-                inner()
+                return inner()
+            for msg in messages:
+                func(json.loads(str(msg)))
         return inner()
