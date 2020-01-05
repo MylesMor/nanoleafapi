@@ -9,11 +9,13 @@ __Detailed package documentation__: https://mylesmor.dev/modules/nanoleafapi.htm
 
 ## Updates
 
-__Current version__: `1.0.4`
+__Current version__: `1.0.5`
 
 __31/12/19__: As of package version `1.0.2`, the issue regarding not installing the correct dependencies has been fixed. Please upgrade your version with `pip install nanoleafapi --upgrade`.
 
 __01/01/20__: As of package version `1.0.3`, there is now a connection check to determine whether the given IP is a valid Nanoleaf device. An exception will be raised if it is not found.
+
+__05/01/20__: As of package version `1.0.5`, the bug described in issue #1 by [vadichi](https://github.com/vadichi) relating to the function `set_effect()` has been resolved.
 
 # Table of Contents
 1. [Installation](#Installation)
