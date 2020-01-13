@@ -41,7 +41,7 @@ To use this module:
 ```
 from nanoleafapi import discovery
 
-nanoleaf_dict = discover_devices()
+nanoleaf_dict = discovery.discover_devices()
 ```
 
 This will return a dictionary in the format: `{name: ip}`.
