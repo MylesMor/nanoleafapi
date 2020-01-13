@@ -161,9 +161,9 @@ class Nanoleaf():
     def toggle_power(self):
         """Toggles the lights on/off"""
         if self.get_power():
-            self.power_off()
+            return self.power_off()
         else:
-            self.power_on()
+            return self.power_on()
 
     #######################################################
     ####                   COLOUR                      ####
@@ -203,7 +203,7 @@ class Nanoleaf():
         :returns: True if successful, otherwise False
         """
         if brightness > 100 or brightness < 0:
-            raise Exception('Brightness should be between 0 and 100')
+            raise ValueError('Brightness should be between 0 and 100')
         data = {"brightness" : {"value": brightness, "duration": duration}}
         r = requests.put(self.url + "/state", data=json.dumps(data))
         return self.__error_check(r.status_code)
@@ -250,7 +250,7 @@ class Nanoleaf():
         :returns: True if successful, otherwise False
         """
         if value > 360 or value < 0:
-            raise Exception('Hue should be between 0 and 360')
+            raise ValueError('Hue should be between 0 and 360')
         data = {"hue" : {"value" : value}}
         r = requests.put(self.url + "/state", data=json.dumps(data))
         return self.__error_check(r.status_code)
@@ -284,7 +284,7 @@ class Nanoleaf():
         :returns: True if successful, otherwise False
         """
         if value > 100 or value < 0:
-            raise Exception('Saturation should be between 0 and 100')
+            raise ValueError('Saturation should be between 0 and 100')
         data = {"sat" : {"value" : value}}
         r = requests.put(self.url + "/state", data=json.dumps(data))
         return self.__error_check(r.status_code)
@@ -319,7 +319,7 @@ class Nanoleaf():
         :returns: True if successful, otherwise False
         """
         if value > 6500 or value < 1200:
-            raise Exception('Brightness should be between 1200 and 6500')
+            raise ValueError('Colour temp should be between 1200 and 6500')
         data = {"ct" : {"value" : value}}
         r = requests.put(self.url + "/state", json.dumps(data))
         return self.__error_check(r.status_code)
@@ -390,7 +390,7 @@ class Nanoleaf():
         :returns: True if effect exists, otherwise False
         """
         r = requests.get(self.url + "/effects/effectsList")
-        if effect in json.loads(r.text):
+        if effect_name in json.loads(r.text):
             return True
         return False
 
@@ -434,7 +434,7 @@ class Nanoleaf():
             if e < 1 or e > 4:
                 raise Exception("Valid event types must be between 1-4")
         self.already_registered = True
-        t = Thread(target=self.__event_listener, args=(func, event_types))
+        t = Thread(target=self.__event_listener, args=(func, set(event_types)))
         t.start()
 
     def __event_listener(self, func, event_types):

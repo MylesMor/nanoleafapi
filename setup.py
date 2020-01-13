@@ -5,8 +5,8 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="nanoleafapi",
-    version="1.0.5",
-    author="Myles Morgan",
+    version="1.1.0",
+    author="MylesMor",
     author_email="hello@mylesmor.dev",
     description="A Python 3 wrapper for the Nanoleaf OpenAPI, " +
                  "for use when controlling both Light Panels and Canvas.",
