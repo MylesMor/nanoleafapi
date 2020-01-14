@@ -17,7 +17,7 @@ __01/01/20__: As of package version `1.0.3`, there is now a connection check to 
 
 __05/01/20__: As of package version `1.0.5`, the bug described in issue #1 by [vadichi](https://github.com/vadichi) relating to the function `set_effect()` has been resolved.
 
-__13/01/20__: As of package version `1.1.0`, added a discovery module to identify Nanoleaf devices on your network and a test class.
+__13/01/20__: As of package version `1.1.0`, added a discovery module to identify Nanoleaf devices on your network and a test class. To use this test class, please insert the IP of your Nanoleaf device and the authorisation token into `test_nanoleaf.py`` in the `setUpClass` method.
 
 # Table of Contents
 1. [Installation](#Installation)
@@ -36,7 +36,7 @@ To install the latest stable release:
 
 You must know the IP address of the Nanoleaf device. This can be either be done using your own methods or by using the disovery module. This module uses SSDP and should work __but__ I have found cases of this method not functioning properly. If it doesn't work, and gives an empty dictionary please identify the IP of the Nanoleaf device yourself.
 
-To use this module:
+To use the discovery module:
 
 ```
 from nanoleafapi import discovery
