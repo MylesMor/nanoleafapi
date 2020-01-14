@@ -17,7 +17,7 @@ __01/01/20__: As of package version `1.0.3`, there is now a connection check to 
 
 __05/01/20__: As of package version `1.0.5`, the bug described in issue #1 by [vadichi](https://github.com/vadichi) relating to the function `set_effect()` has been resolved.
 
-__13/01/20__: As of package version `1.1.0`, added a discovery module to identify Nanoleaf devices on your network and a test class. To use this test class, please insert the IP of your Nanoleaf device and the authorisation token into `test_nanoleaf.py`` in the `setUpClass` method.
+__13/01/20__: As of package version `1.1.0`, added a discovery module to identify Nanoleaf devices on your network and a test class. To use this test class, please insert the IP of your Nanoleaf device and the authorisation token into `test_nanoleaf.py` in the `setUpClass` method.
 
 # Table of Contents
 1. [Installation](#Installation)
