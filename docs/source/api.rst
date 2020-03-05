@@ -13,4 +13,4 @@ Nanoleaf
 ---------------------------
 
 .. automodule:: nanoleaf
-   :members:
+    :members:
