@@ -7,7 +7,7 @@ __nanoleafapi__ is a Python 3 wrapper for the Nanoleaf OpenAPI. It provides an e
 
 __Nanoleaf API__: https://forum.nanoleaf.me/docs/openapi
 
-__Detailed package documentation__: https://mylesmor.dev/modules/nanoleafapi.html
+__Detailed package documentation__: https://nanoleafapi.readthedocs.io
 
 ## Updates
 
@@ -75,7 +75,7 @@ All of the following methods can be called with the Nanoleaf object you created.
 
 For more information about the Nanoleaf API: https://forum.nanoleaf.me/docs/openapi
 
-For more in-depth documentation about this package visit: https://mylesmor.dev/modules/nanoleafapi.html
+For more in-depth documentation about this package visit: https://nanoleafapi.readthedocs.io
 
 #### User Management
 ```
