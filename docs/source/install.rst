@@ -52,7 +52,7 @@ All of the following methods can be called with the Nanoleaf object you created.
 
 For more information about the Nanoleaf API: https://forum.nanoleaf.me/docs/openapi
 
-For more in-depth documentation about this package visit: https://nanoleafapi.readthedocs.io/api.html
+For more in-depth documentation about this package visit: https://nanoleafapi.readthedocs.io/en/latest/api.html
 
 User Management
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -160,12 +160,13 @@ Not really sure what this is for, but included it anyway.
 Effects
 ~~~~~~~~~~~~~~~~~~~~~~
 
-```
-get_current_effect()    # Returns either name of current effect if available or *Solid*/*Static*/*Dynamic*.
-list_effects()          # Returns a list of names of all available effects.
-effect_exists(name)     # Helper method which determines whether the given string exists as an effect.
-set_effect(name)        # Sets the current effect.
-```
+.. code-block:: python
+
+  get_current_effect()    # Returns either name of current effect if available or *Solid*/*Static*/*Dynamic*.
+  list_effects()          # Returns a list of names of all available effects.
+  effect_exists(name)     # Helper method which determines whether the given string exists as an effect.
+  set_effect(name)        # Sets the current effect.
+
 
 Events
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -177,12 +178,11 @@ Creates an event listener for the different types of events.
 
 You should pass your own function with one argument (event as a dictionary). This function will run every time a new event is received.
 
-__IMPORTANT__: You cannot currently call ``register_event()`` more than __once__ due to API limitations. Instead, distinguish between the events in your function using the dictionary data.
+**IMPORTANT**: You cannot currently call ``register_event()`` more than **once** due to API limitations. Instead, distinguish between the events in your function using the dictionary data.
 
 A list of event types you would like to listen for should also be passed. You can register up to 4 events (all of them), and these are listed below:
 
 Event IDs:
-.. code-block::
 
   State (changes in power/brightness): 1
   Layout: 2
