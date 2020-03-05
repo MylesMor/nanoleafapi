@@ -43,3 +43,172 @@ __IMPORTANT__: Once this has been run, it will print your authentication token t
 ``auth_token = XXXXXXXXXXXXXXXX``
 
 ``nl = nanoleaf(ip, auth_token)``
+
+
+Methods
+-------------------
+
+All of the following methods can be called with the Nanoleaf object you created.
+
+For more information about the Nanoleaf API: https://forum.nanoleaf.me/docs/openapi
+
+For more in-depth documentation about this package visit: https://nanoleafapi.readthedocs.io/api.html
+
+User Management
+~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+  generate_auth_token()     # Generates new authentication token (hold power for 5-7 before running)
+  delete_user(auth_token)   # Deletes an authentication token from the device
+
+
+Power
+~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+  get_power()               # Returns True if lights are on, otherwise False
+  power_off()               # Powers off the lights
+  power_on()                # Powers on the lights
+  toggle_power()            # Toggles light on/off
+
+
+Colour
+~~~~~~~~~~~~~~~~~~~~~~
+
+Colours are generated using HSV (or HSB) in the API, and these individual values can be adjusted using methods which are as described, [hue](#Hue), [saturation](#Saturation), [brightness/value](#Brightness). The method in this section uses RGB (0-255) and converts this to HSV.
+
+There are already some pre-set colours which can be imported to be used with the ``set_color()`` method:
+
+.. code-block:: python
+
+  from nanoleafapi import RED, ORANGE, YELLOW, GREEN, LIGHT_BLUE, BLUE, PINK, PURPLE, WHITE
+
+
+The ``set_color()`` method can then be called, passing in either a pre-set colour or your own RGB colour in the form of a tuple: ``(r, g, b)``.
+
+.. code-block:: python
+
+  set_color((r, g, b))      # Set all lights to RGB colour. Pass the colour as a tuple.
+  set_color(RED)            # Same result but using a pre-set colour.
+
+Brightness
+~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+  set_brightness(brightness, duration)     # Sets the brightness of the lights (accepts values between 0-100)
+  increment_brightness(value)              # Increments the brightness by set amount (can also be negative)
+  get_brightness()                         # Returns current brightness
+
+
+Hue
+~~~~~~~~~~~~~~~~~~~~~~
+
+Use these if you want to change the HSV values manually, otherwise use ``set_color()`` for colour change using RGB.
+
+.. code-block:: python
+
+  set_hue(value)            # Sets the hue of the lights (accepts values between 0-360)
+  increment_hue(value)      # Increments the hue by set amount (can also be negative)
+  get_hue()                 # Returns current hue
+
+
+Saturation
+~~~~~~~~~~~~~~~~~~~~~~
+
+Use these if you want to change the HSV values manually, otherwise use ``set_color()`` for colour change using RGB.
+
+.. code-block:: python
+
+  set_saturation(value)            # Sets the saturation of the lights (accepts value between 0-100)
+  increment_saturation(value)      # Increments the saturation by set amount (can also be negative)
+  get_saturation()                 # Returns current saturation
+
+
+Identify
+~~~~~~~~~~~~~~~~~~~~~~
+
+This is usually used to identify the current lights by flashing them on and off.
+
+.. code-block:: python
+
+  identify()
+
+
+Colour Temperature
+~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+  set_color_temp(value)            # Sets the colour temperature of the lights (accepts between 1200-6500)
+  increment_color_temp(value)      # Increments the colour temperature by set amount (can also be negative)
+  get_color_temp()                 # Returns current colour temperature
+
+
+Colour Mode
+~~~~~~~~~~~~~~~~~~~~~~
+
+Not really sure what this is for, but included it anyway.
+
+.. code-block:: python
+
+  get_color_mode()      # Returns current colour mode
+
+
+Effects
+~~~~~~~~~~~~~~~~~~~~~~
+
+```
+get_current_effect()    # Returns either name of current effect if available or *Solid*/*Static*/*Dynamic*.
+list_effects()          # Returns a list of names of all available effects.
+effect_exists(name)     # Helper method which determines whether the given string exists as an effect.
+set_effect(name)        # Sets the current effect.
+```
+
+Events
+~~~~~~~~~~~~~~~~~~~~~~
+Creates an event listener for the different types of events.
+
+.. code-block:: python
+
+  register_event(function, event_types)
+
+You should pass your own function with one argument (event as a dictionary). This function will run every time a new event is received.
+
+__IMPORTANT__: You cannot currently call ``register_event()`` more than __once__ due to API limitations. Instead, distinguish between the events in your function using the dictionary data.
+
+A list of event types you would like to listen for should also be passed. You can register up to 4 events (all of them), and these are listed below:
+
+Event IDs:
+.. code-block::
+
+  State (changes in power/brightness): 1
+  Layout: 2
+  Effects: 3
+  Touch (canvas only): 4
+
+
+Example Usage
+++++++++++++++++
+
+.. code-block:: python
+
+  def event_function(event):
+      print(event)
+
+  # Register for all events
+  nl.register_event(event_function, [1, 2, 3, 4])
+
+
+Example Output
+++++++++++++++++
+
+When an event occurs, the ``event_function()`` will run and therefore in this case, print the event dictionary.
+
+.. code-block:: python
+
+  {"events":[{"attr":2,"value":65}]}                 # Example of state event (1)
+  {"events":[{"attr":1,"value":"Falling Whites"}]}   # Example of effects event (3)
+  {"events":[{"panelId":7397,"gesture":0}]}          # Example of touch event (4)
