@@ -1,7 +1,7 @@
 Documentation
 ===================
 
-nanoleafapi.discovery module
+Discovery
 ----------------------------
 
 .. automodule:: discovery
@@ -9,10 +9,8 @@ nanoleafapi.discovery module
    :undoc-members:
    :show-inheritance:
 
-nanoleafapi.nanoleaf module
+Nanoleaf
 ---------------------------
 
 .. automodule:: nanoleaf
    :members:
-   :undoc-members:
-   :show-inheritance:
