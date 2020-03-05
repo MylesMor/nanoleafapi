@@ -20,7 +20,7 @@ To use the discovery module:
   from nanoleafapi import discovery
   nanoleaf_dict = discovery.discover_devices()
 
-This will return a dictionary in the format: `{name: ip}`.
+This will return a dictionary in the format: ``{name: ip}``.
 
 
 Usage
@@ -28,18 +28,18 @@ Usage
 
 There is just one class that contains all relevant functions for controlling the lights. To get started:
 
-`from nanoleafapi import Nanoleaf`
+``from nanoleafapi import Nanoleaf``
 
 Next, a Nanoleaf object can be created with:
 
-`nl = Nanoleaf(ip)`
+``nl = Nanoleaf(ip)``
 
 Next, if you don't have an authentication token, hold the power button on the lights for 5-7 seconds and then run:
 
-`nl.generate_auth_token()`
+``nl.generate_auth_token()``
 
 __IMPORTANT__: Once this has been run, it will print your authentication token to the console. Please save this and in future runs of your program, initialise the Nanoleaf object with the authentication token:
 
-`auth_token = XXXXXXXXXXXXXXXX`
+``auth_token = XXXXXXXXXXXXXXXX``
 
-`nl = nanoleaf(ip, auth_token)`
+``nl = nanoleaf(ip, auth_token)``

@@ -1,6 +1,12 @@
 Documentation
 ===================
 
+Nanoleaf
+---------------------------
+
+.. automodule:: nanoleaf
+    :members:
+
 Discovery
 ----------------------------
 
@@ -8,9 +14,3 @@ Discovery
    :members:
    :undoc-members:
    :show-inheritance:
-
-Nanoleaf
----------------------------
-
-.. automodule:: nanoleaf
-    :members:
