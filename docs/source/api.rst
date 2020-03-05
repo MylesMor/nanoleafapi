@@ -1,21 +1,10 @@
 Documentation
 ===================
 
-Module contents
----------------
-
-.. automodule:: nanoleafapi
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Submodules
-----------
-
 nanoleafapi.discovery module
 ----------------------------
 
-.. automodule:: nanoleafapi.discovery
+.. automodule:: discovery
    :members:
    :undoc-members:
    :show-inheritance:
@@ -23,7 +12,7 @@ nanoleafapi.discovery module
 nanoleafapi.nanoleaf module
 ---------------------------
 
-.. automodule:: nanoleafapi.nanoleaf
+.. automodule:: nanoleaf
    :members:
    :undoc-members:
    :show-inheritance:
