@@ -18,7 +18,7 @@ To use the discovery module:
 .. code-block:: python
 
   from nanoleafapi import discovery
-  nanoleaf_dict = discovery.discover_devices()
+  nanoleaf_dict = discovery.discover_devices(timeout=30)
 
 This will return a dictionary in the format: ``{name: ip}``.
 

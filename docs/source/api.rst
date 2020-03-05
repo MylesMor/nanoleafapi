@@ -1,8 +1,14 @@
 Documentation
 ===================
 
-Nanoleaf documentation
+Nanoleaf
 -----------------------
 
 .. automodule:: nanoleaf
+    :members:
+
+Discovery documentation
+-----------------------
+
+.. automodule:: discovery
     :members:
