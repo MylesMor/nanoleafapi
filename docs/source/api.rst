@@ -7,7 +7,7 @@ Nanoleaf
 .. automodule:: nanoleaf
     :members:
 
-Discovery documentation
+Discovery
 -----------------------
 
 .. automodule:: discovery
