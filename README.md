@@ -11,15 +11,17 @@ __Detailed package documentation__: https://nanoleafapi.readthedocs.io
 
 ## Updates
 
-__Current version__: `1.1.0`
+__Current version__: `1.1.1`
 
 __31/12/19__: As of package version `1.0.2`, the issue regarding not installing the correct dependencies has been fixed. Please upgrade your version with `pip install nanoleafapi --upgrade`.
 
 __01/01/20__: As of package version `1.0.3`, there is now a connection check to determine whether the given IP is a valid Nanoleaf device. An exception will be raised if it is not found.
 
-__05/01/20__: As of package version `1.0.5`, the bug described in issue #1 by [vadichi](https://github.com/vadichi) relating to the function `set_effect()` has been resolved.
+__05/01/20__: As of package version `1.0.5`, the bug described in issue #1 relating to the function `set_effect()` has been resolved.
 
 __13/01/20__: As of package version `1.1.0`, added a discovery module to identify Nanoleaf devices on your network and a test class. To use this test class, please insert the IP of your Nanoleaf device and the authorisation token into `test_nanoleaf.py` in the `setUpClass` method.
+
+__29/04/20__: As of package version `1.1.1`, the bug described in issue #4 by [vadichi](https://github.com/vadichi) relating to the function `discover_devices()` in the `discovery` module has been resolved.
 
 # Table of Contents
 1. [Installation](#Installation)

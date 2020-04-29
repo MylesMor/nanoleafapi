@@ -184,10 +184,10 @@ A list of event types you would like to listen for should also be passed. You ca
 
 Event IDs:
 
-State (changes in power/brightness): **1**
-Layout: **2**
-Effects: **3**
-Touch (canvas only): **4**
+| State (changes in power/brightness): **1**
+| Layout: **2**
+| Effects: **3**
+| Touch (canvas only): **4**
 
 
 Example Usage
