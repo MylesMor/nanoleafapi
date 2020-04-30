@@ -34,11 +34,17 @@ def discover_devices(timeout=30, debug=False):
         ip = None
         name = None
         for header in headers:
-            if "Location" or "LOCATION" in header:
-                ip_string = header.split("http://")[1]
-                ip = ip_string.split(":")[0]
+            if "Location" in header:
+                try:
+                    ip_string = header.split("http://")[1]
+                    ip = ip_string.split(":")[0]
+                except:
+                    pass
             if "nl-devicename" in header:
-                name = header.split("nl-devicename: ")[1]
+                try:
+                    name = header.split("nl-devicename: ")[1]
+                except:
+                    pass
         if ip is not None:
             nanoleaf_dict[name] = ip
     return nanoleaf_dict
