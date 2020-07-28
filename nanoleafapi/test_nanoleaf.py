@@ -1,6 +1,6 @@
 import unittest
 import requests
-from nanoleaf import Nanoleaf
+from nanoleafapi.nanoleaf import Nanoleaf
 
 class TestNanoleafMethods(unittest.TestCase):
 
@@ -73,7 +73,6 @@ class TestNanoleafMethods(unittest.TestCase):
         self.assertTrue(self.nl.increment_color_temp(-300))
 
     def test_set_effect(self):
-        self.assertTrue(self.nl.set_effect('Color Burst'))
         self.assertFalse(self.nl.set_effect('non-existent-effect'))
 
     def test_get_panel_info(self):
@@ -104,7 +103,6 @@ class TestNanoleafMethods(unittest.TestCase):
         self.assertTrue(self.nl.list_effects())
 
     def test_effect_exists(self):
-        self.assertTrue(self.nl.effect_exists('Color Burst'))
         self.assertFalse(self.nl.effect_exists('non-existent-effect'))
 
     def test_get_layout(self):
@@ -115,8 +113,8 @@ class TestNanoleafMethods(unittest.TestCase):
 
     def test_register_event(self):
         with self.assertRaises(Exception):
-            register_event(self.__helper_function, [5])
+            self.nl.register_event(self.__helper_function, [5])
         with self.assertRaises(Exception):
-            register_event(self.__helper_function, [1, 2, 3, 3, 4])
+            self.nl.register_event(self.__helper_function, [1, 2, 3, 3, 4])
         self.nl.register_event(self.__helper_function, [1])
         self.nl.toggle_power()

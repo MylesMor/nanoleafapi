@@ -3,3 +3,4 @@
 /dist
 /nanoleafapi.egg-info
 /build/*
+/.vscode
