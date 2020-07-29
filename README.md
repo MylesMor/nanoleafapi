@@ -22,7 +22,7 @@ __Detailed package documentation__: https://nanoleafapi.readthedocs.io
 To install the latest stable release:
 
 ```batch
-pip install nanoleafapi
+python -m pip install nanoleafapi
 ```
 
 ## Prerequisites
