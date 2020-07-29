@@ -167,6 +167,59 @@ Effects
   effect_exists(name)     # Helper method which determines whether the given string exists as an effect.
   set_effect(name)        # Sets the current effect.
 
+Write Effect
+~~~~~~~~~~~~~~~~~~~~~~
+.. code-block:: python
+
+  write_effect(effect_dict)    # Sets a user-created effect.
+
+Writing effects is rather complicated; you need to follow the the exact format for the effect dictionary, which can be found here: https://forum.nanoleaf.me/docs/openapi#_u2t4jzmkp8nt
+
+In future updates, I hope to add a way to make this process easier, but for now an example of a valid effect dictionary is provided below:
+
+.. code-block:: python
+
+  effect_data = {
+              "command": "display",
+              "animName": "New animation",
+              "animType": "random",
+              "colorType": "HSB",
+              "animData": None,
+              "palette": [
+                  {
+                      "hue": 0,
+                      "saturation": 100,
+                      "brightness": 100
+                  },
+                  {
+                      "hue": 120,
+                      "saturation": 100,
+                      "brightness": 100
+                  },
+                  {
+                      "hue": 180,
+                      "saturation": 100,
+                      "brightness": 100
+                  }
+              ],
+              "brightnessRange": {
+                  "minValue": 50,
+                  "maxValue": 100
+              },
+              "transTime": {
+                  "minValue": 50,
+                  "maxValue": 100
+              },
+              "delayTime": {
+                  "minValue": 50,
+                  "maxValue": 100
+              },
+              "loop": True
+          }
+  
+
+Inputting an invalid dictionary will result in the function returning False, and it printing to the console `Invalid effect dictionary!`.
+
 
 Events
 ~~~~~~~~~~~~~~~~~~~~~~
