@@ -164,7 +164,7 @@ Event IDs:
 State (changes in power/brightness): 1
 Layout: 2
 Effects: 3
-Touch (canvas only): 4
+Touch (Canvas/Shapes only): 4
 ```
 
 #### Example Usage
