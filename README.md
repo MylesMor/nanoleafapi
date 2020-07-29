@@ -65,14 +65,14 @@ __IMPORTANT__: Once this has been run, it will print your authentication token t
 ```py 
 auth_token = "XXXXXXXXXXXXXXXX"
 ```
-Now you can use commands to control the panels like in the examples below
+You can now use the commands to control the panels as displayed in the example below.
 
 ```py
 nl.toggle_power()
 nl.set_color((255, 0, 0))            # Red
 ```
 
-![alt text](https://raw.githubusercontent.com/DIYCharles/nanoleafapi/master/photos/img1.JPG "img1.jpg")
+![Example setup](https://github.com/MylesMor/nanoleafapi/blob/master/photos/img1.JPG?raw=true)
 
 
 ## Methods
@@ -177,7 +177,7 @@ __IMPORTANT__: You cannot currently call ```register_event()``` more than __once
 A list of event types you would like to listen for should also be passed. You can register up to 4 events (all of them), and these are listed below:
 
 Event IDs:
-```py
+```
 State (changes in power/brightness): 1
 Layout: 2
 Effects: 3
