@@ -1,6 +1,7 @@
 import unittest
 import requests
 from nanoleafapi.nanoleaf import Nanoleaf
+import json
 
 class TestNanoleafMethods(unittest.TestCase):
 
@@ -82,13 +83,16 @@ class TestNanoleafMethods(unittest.TestCase):
         self.assertTrue(str(self.nl.get_power()))
 
     def test_get_brightness(self):
-        self.assertTrue(self.nl.get_brightness())
+        self.nl.set_brightness(100)
+        self.assertEqual(self.nl.get_brightness(), 100)
 
     def test_get_hue(self):
-        self.assertTrue(self.nl.get_hue())
+        self.nl.set_hue(100)
+        self.assertEqual(self.nl.get_hue(), 100)
 
     def test_get_saturation(self):
-        self.assertTrue(self.nl.get_saturation())
+        self.nl.set_saturation(100)
+        self.assertEqual(self.nl.get_saturation(), 100)
 
     def test_get_color_temp(self):
         self.assertTrue(self.nl.get_color_temp())
@@ -101,6 +105,47 @@ class TestNanoleafMethods(unittest.TestCase):
 
     def test_list_effects(self):
         self.assertTrue(self.nl.list_effects())
+
+    def test_write_effect(self):
+        effect_data = {
+            "command": "display",
+            "animName": "New animation",
+            "animType": "random",
+            "colorType": "HSB",
+            "animData": None,
+            "palette": [
+                {
+                    "hue": 0,
+                    "saturation": 100,
+                    "brightness": 100
+                },
+                {
+                    "hue": 120,
+                    "saturation": 100,
+                    "brightness": 100
+                },
+                {
+                    "hue": 240,
+                    "saturation": 100,
+                    "brightness": 100
+                }
+            ],
+            "brightnessRange": {
+                "minValue": 25,
+                "maxValue": 100
+            },
+            "transTime": {
+                "minValue": 25,
+                "maxValue": 100
+            },
+            "delayTime": {
+                "minValue": 25,
+                "maxValue": 100
+            },
+            "loop": True
+        }
+        self.assertTrue(self.nl.write_effect(effect_data))
+        self.assertFalse(self.nl.write_effect({"invalid-string": "invalid"}))
 
     def test_effect_exists(self):
         self.assertFalse(self.nl.effect_exists('non-existent-effect'))

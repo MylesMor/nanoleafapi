@@ -61,15 +61,15 @@ class Nanoleaf():
         """
         if self.print_errors:
             if code == 200 or code == 204:
-                print("Action performed successfully.")
+                print(str(code) + ": Action performed successfully.")
                 return True
             elif code == 400:
                 print("Error 400: Bad request.")
             elif code == 401:
-                print("Error 401: Unauthorized, incorrect auth token. " +
+                print("Error 401: Unauthorized, invalid auth token. " +
                     "Please generate a new one.")
             elif code == 403:
-                print("Unauthorized, please hold the power button on the controller for 5-7 seconds, then try again.")
+                print("Error 403: Unauthorized, please hold the power button on the controller for 5-7 seconds, then try again.")
             elif code == 404:
                 print("Error 404: Resource not found.")
             elif code == 500:
@@ -381,6 +381,17 @@ class Nanoleaf():
         """Returns a list of available effects"""
         r = requests.get(self.url + "/effects/effectsList")
         return json.loads(r.text)
+
+    def write_effect(self, effect_dict):
+        """Writes a user-defined effect to the panels
+
+        :param effect_dict: The effect dictionary in the format described here: https://forum.nanoleaf.me/docs/openapi#_u2t4jzmkp8nt
+        :returns: True if successful, otherwise False
+        """
+        r = requests.put(self.url + "/effects", data=json.dumps({"write": effect_dict}))
+        if r.status_code == 400:
+            print("Invalid effect dictionary!")
+        return self.__error_check(r.status_code)
 
     def effect_exists(self, effect_name):
         """Verifies whether an effect exists
