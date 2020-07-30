@@ -19,11 +19,11 @@ sys.path.insert(0, os.path.abspath('../../nanoleafapi'))
 # -- Project information -----------------------------------------------------
 
 project = 'nanoleafapi'
-copyright = '2019, MylesMor'
+copyright = '2020, MylesMor'
 author = 'MylesMor'
 
 # The full version, including alpha/beta/rc tags
-release = '1.1.0'
+release = '1.1.5'
 
 
 # -- General configuration ---------------------------------------------------
