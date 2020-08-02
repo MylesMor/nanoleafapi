@@ -73,7 +73,7 @@ nl.toggle_power()
 nl.set_color((255, 0, 0))            # Red
 ```
 
-![Example setup](https://github.com/MylesMor/nanoleafapi/blob/master/photos/img1.JPG?raw=true)
+![Example setup](https://github.com/MylesMor/nanoleafapi/blob/master/photos/nanoleafapi_example.png?raw=true)
 
 
 ## Methods
