@@ -64,6 +64,7 @@ __IMPORTANT__: Once this has been run, it will print your authentication token t
 
 ```py 
 auth_token = "XXXXXXXXXXXXXXXX"
+nl = Nanoleaf(ip, auth_token)
 ```
 You can now use the commands to control the panels as displayed in the example below.
 
