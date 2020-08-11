@@ -259,4 +259,5 @@ When an event occurs, the `event_function()` will run and therefore in this case
 Currently in development is an CLI effects builder, to help with the `write_effect` functionality. This will allow you to quickly and easily create the dictionaries required to make your own effects!
 
 Here's a sneak peek:
+
 ![Effects builder](https://github.com/MylesMor/nanoleafapi/blob/master/photos/effects-builder.png?raw=true)
