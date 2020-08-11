@@ -9,6 +9,8 @@ __Nanoleaf API__: https://forum.nanoleaf.me/docs/openapi
 
 __Detailed package documentation__: https://nanoleafapi.readthedocs.io
 
+# Coming Soon
+Currently in development is an CLI effects builder, to help with the `write_effect` functionality. This will allow you to quickly and easily create the dictionaries required to make your own effects!
 
 # Table of Contents
 1. [Installation](#Installation)
