@@ -16,7 +16,7 @@ __Detailed package documentation__: https://nanoleafapi.readthedocs.io
    * [Methods](#Methods)
    * [Effects](#Effects)
    * [Events](#Events)
-4. [Upcoming features](#Upcoming-Features)
+4. [Upcoming Features](#Upcoming-Features)
 
 ## Installation
 To install the latest stable release:
