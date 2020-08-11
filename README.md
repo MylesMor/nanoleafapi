@@ -9,9 +9,6 @@ __Nanoleaf API__: https://forum.nanoleaf.me/docs/openapi
 
 __Detailed package documentation__: https://nanoleafapi.readthedocs.io
 
-# Coming Soon
-Currently in development is an CLI effects builder, to help with the `write_effect` functionality. This will allow you to quickly and easily create the dictionaries required to make your own effects!
-
 # Table of Contents
 1. [Installation](#Installation)
 2. [Prerequisites](#Prerequisites)
@@ -19,6 +16,7 @@ Currently in development is an CLI effects builder, to help with the `write_effe
    * [Methods](#Methods)
    * [Effects](#Effects)
    * [Events](#Events)
+4. [Upcoming features](#Upcoming-Features)
 
 ## Installation
 To install the latest stable release:
@@ -256,3 +254,9 @@ When an event occurs, the `event_function()` will run and therefore in this case
 {"events":[{"attr":1,"value":"Falling Whites"}]}   # Example of effects event (3)
 {"events":[{"panelId":7397,"gesture":0}]}          # Example of touch event (4)
 ```
+
+## Upcoming Features
+Currently in development is an CLI effects builder, to help with the `write_effect` functionality. This will allow you to quickly and easily create the dictionaries required to make your own effects!
+
+Here's a sneak peek:
+![Effects builder](https://github.com/MylesMor/nanoleafapi/blob/master/photos/effects-builder.png?raw=true)
