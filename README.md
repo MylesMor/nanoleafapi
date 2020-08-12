@@ -1,6 +1,6 @@
 # nanoleafapi
 
-[![PyPI version](https://badge.fury.io/py/nanoleafapi.svg)](https://badge.fury.io/py/nanoleafapi) [![Documentation Status](https://readthedocs.org/projects/nanoleafapi/badge/?version=latest)](https://nanoleafapi.readthedocs.io/en/latest/?badge=latest)
+[![PyPI version](https://badge.fury.io/py/nanoleafapi.svg)](https://badge.fury.io/py/nanoleafapi) [![Documentation Status](https://readthedocs.org/projects/nanoleafapi/badge/?version=latest)](https://nanoleafapi.readthedocs.io/en/latest/?badge=latest) [![Downloads](https://pepy.tech/badge/nanoleafapi)](https://pepy.tech/project/nanoleafapi)
 
 
 __nanoleafapi__ is a Python 3 wrapper for the Nanoleaf OpenAPI. It provides an easy way to use many of the functions available in the API. It supports the Light Panels (previously Aurora), Canvas and Shapes (including Hexgaons).
