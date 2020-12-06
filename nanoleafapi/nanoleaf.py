@@ -314,11 +314,11 @@ class Nanoleaf():
     def set_color_temp(self, value):
         """Sets the white colour temperature of the lights
 
-        :param value: The required colour temperature (between 0 and 100)
+        :param value: The required colour temperature (between 1200 and 6500)
 
         :returns: True if successful, otherwise False
         """
-        if value > 6500 or value < 1200:
+        if value >= 6500 or value <= 1200:
             raise ValueError('Colour temp should be between 1200 and 6500')
         data = {"ct" : {"value" : value}}
         r = requests.put(self.url + "/state", json.dumps(data))
