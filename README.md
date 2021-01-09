@@ -48,15 +48,15 @@ There is just one class that contains all relevant functions for controlling the
 from nanoleafapi import Nanoleaf
 ```
 
-Next, a Nanoleaf object can be created with the following section of code. __IF you don't have an authentication token yet, hold the power button for 5-7 seconds on your Nanoleaf device before running the following code. This will generate a new token and save it to your user directory to use for future uses of this package.__
+<details>
+  <summary>Click to expand - FOR VERSIONS <= 1.1.5 ONLY</summary>
+ 
+Next, a Nanoleaf object can be created with the following section of code:
 
 ```py 
 nl = Nanoleaf("ip")
 ```
 
-<details>
-  <summary>Click to expand - FOR VERSIONS <= 1.1.5 ONLY</summary>
- 
 Next, if you don't have an authentication token, hold the power button on the lights for 5-7 seconds and then run:
 
 ```py
@@ -70,21 +70,26 @@ auth_token = "XXXXXXXXXXXXXXXX"
 nl = Nanoleaf(ip, auth_token)
 ```
 
+![Example setup](https://github.com/MylesMor/nanoleafapi/blob/master/photos/nanoleafapi_example.png?raw=true)
+
 </details>
 
 The following instructions are for versions >= 1.2.0, if you're looking for information for previous versions, click the expandable section above.
 
+Next, a Nanoleaf object can be created with the following section of code. __IF you don't have an authentication token yet, hold the power button for 5-7 seconds on your Nanoleaf device before running the following code. This will generate a new token and save it to your user directory to use for future uses of this package.__
 
+```py 
+nl = Nanoleaf("ip")
+```
 
 You can now use the commands to control the panels as displayed in the example below.
 
 ```py
 nl.toggle_power()
-nl.set_color((255, 0, 0))            # Red
+nl.set_color((255, 0, 0))            # Set colour to red
 ```
 
-![Example setup](https://github.com/MylesMor/nanoleafapi/blob/master/photos/nanoleafapi_example.png?raw=true)
-
+![Example setup](https://github.com/MylesMor/nanoleafapi/blob/master/photos/nanoleafapi_new_example.png?raw=true)
 
 ## Methods
 
@@ -96,8 +101,14 @@ For more in-depth documentation about this package visit: https://nanoleafapi.re
 
 #### User Management
 ```py
-generate_auth_token()     # Generates new authentication token (hold power for 5-7 before running)
-delete_user(auth_token)   # Deletes an authentication token from the device
+delete_auth_token(auth_token)   # Deletes an authentication token from the device and the token storage file.
+```
+
+#### General
+```py
+get_info()         # Returns device information dictionary
+get_name()         # Returns the current device name
+check_connection() # Raises NanoleafConnectionError if connection fails
 ```
 
 #### Power
@@ -263,6 +274,12 @@ When an event occurs, the `event_function()` will run and therefore in this case
 {"events":[{"attr":2,"value":65}]}                 # Example of state event (1)
 {"events":[{"attr":1,"value":"Falling Whites"}]}   # Example of effects event (3)
 {"events":[{"panelId":7397,"gesture":0}]}          # Example of touch event (4)
+```
+
+#### Errors
+```py
+NanoleafRegistrationError()  # Raised when token generation mode not active on device
+NanoleafConnectionError()    # Raised when there is a connection error during check_connection() method
 ```
 
 ## Upcoming Features
