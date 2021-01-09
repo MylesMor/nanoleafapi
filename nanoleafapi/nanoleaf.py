@@ -25,7 +25,7 @@ class Nanoleaf():
     :ivar print_errors: True for errors to be shown, otherwise False
     """
 
-    def __init__(self, ip, auth_token=None, print_errors=False):
+    def __init__(self, ip, print_errors=False, auth_token=None):
         """Initalises Nanoleaf class with desired arguments.
 
         :param ip: The IP address of the Nanoleaf device
