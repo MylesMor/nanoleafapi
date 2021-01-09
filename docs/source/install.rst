@@ -30,20 +30,18 @@ There is just one class that contains all relevant functions for controlling the
 
 ``from nanoleafapi import Nanoleaf``
 
-Next, a Nanoleaf object can be created with:
+The following instructions are for versions >= 1.2.0, if you're looking for information for previous versions, visit: https://github.com/MylesMor/nanoleafapi/blob/master/README.md#Usage
 
-``nl = Nanoleaf(ip)``
+Next, a Nanoleaf object can be created with the following section of code. IF you don't have an authentication token yet, hold the power button for 5-7 seconds on your Nanoleaf device before running the following code. This will generate a new token and save it to your user directory to use for future uses of this package.
 
-Next, if you don't have an authentication token, hold the power button on the lights for 5-7 seconds and then run:
+``nl = Nanoleaf("ip")``
 
-``nl.generate_auth_token()``
+You can now use the commands to control the panels as displayed in the example below.
 
-__IMPORTANT__: Once this has been run, it will print your authentication token to the console. Please save this and in future runs of your program, initialise the Nanoleaf object with the authentication token:
+.. code-block:: python
 
-``auth_token = XXXXXXXXXXXXXXXX``
-
-``nl = nanoleaf(ip, auth_token)``
-
+  nl.toggle_power()
+  nl.set_color((255, 0, 0))            # Set colour to red
 
 Methods
 -------------------
@@ -265,3 +263,12 @@ When an event occurs, the ``event_function()`` will run and therefore in this ca
   {"events":[{"attr":2,"value":65}]}                 # Example of state event (1)
   {"events":[{"attr":1,"value":"Falling Whites"}]}   # Example of effects event (3)
   {"events":[{"panelId":7397,"gesture":0}]}          # Example of touch event (4)
+
+
+Errors
+~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+  NanoleafRegistrationError()  # Raised when token generation mode not active on device
+  NanoleafConnectionError()    # Raised when there is a connection error during check_connection() method
