@@ -9,6 +9,8 @@ __Nanoleaf API__: https://forum.nanoleaf.me/docs/openapi
 
 __Detailed package documentation__: https://nanoleafapi.readthedocs.io
 
+__IMPORTANT__: As of version 1.2.0, there have been some changes in how the authentication token is generated and stored, please re-read the [Usage](#Usage) section.
+
 # Table of Contents
 1. [Installation](#Installation)
 2. [Prerequisites](#Prerequisites)
@@ -16,6 +18,7 @@ __Detailed package documentation__: https://nanoleafapi.readthedocs.io
    * [Methods](#Methods)
    * [Effects](#Effects)
    * [Events](#Events)
+   * [Errors](#Errors)
 4. [Upcoming Features](#Upcoming-Features)
 
 ## Installation
