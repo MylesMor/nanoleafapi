@@ -1,6 +1,6 @@
 import unittest
 import requests
-from nanoleafapi.nanoleaf import Nanoleaf
+from nanoleaf import Nanoleaf
 import json
 
 class TestNanoleafMethods(unittest.TestCase):
@@ -9,8 +9,7 @@ class TestNanoleafMethods(unittest.TestCase):
     def setUpClass(self):
         # INSERT YOUR OWN VALUES HERE
         ip = ''
-        auth_token = ''
-        self.nl = Nanoleaf(ip, auth_token, True)
+        self.nl = Nanoleaf(ip, True)
 
     def test_power_on(self):
         self.assertTrue(self.nl.power_on())
@@ -77,7 +76,7 @@ class TestNanoleafMethods(unittest.TestCase):
         self.assertFalse(self.nl.set_effect('non-existent-effect'))
 
     def test_get_panel_info(self):
-        self.assertTrue(self.nl.get_panel_info())
+        self.assertTrue(self.nl.get_info())
 
     def test_get_power(self):
         self.assertTrue(str(self.nl.get_power()))

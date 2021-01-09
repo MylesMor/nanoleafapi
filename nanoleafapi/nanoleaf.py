@@ -3,6 +3,7 @@ import json
 from sseclient import SSEClient
 from threading import Thread
 import colorsys
+import os
 
 # Preset colours
 RED = (255, 0, 0)
@@ -29,8 +30,7 @@ class Nanoleaf():
 
         :param ip: The IP address of the Nanoleaf device
         :param auth_token: Optional, include Nanoleaf authentication
-            token here if generated, otherwise call generate_auth_token()
-            after initlisation
+            token here if required.
         :param print_errors: Optional, True to show errors in the console
 
         :type ip: str
@@ -39,14 +39,16 @@ class Nanoleaf():
         """
         self.ip = ip
         self.url = "http://" + ip + ":16021/api/v1/" + str(auth_token)
-        self.auth_token = auth_token
+        self.check_connection()
+        if auth_token is None:
+            self.auth_token = self.create_auth_token()
+            if self.auth_token is None:
+                raise NanoleafRegistrationError()
+        else:
+            self.auth_token = auth_token
+        self.url = "http://" + ip + ":16021/api/v1/" + str(self.auth_token)
         self.print_errors = print_errors
         self.already_registered = False
-        try:
-            self.__check_connection()
-        except:
-            raise Exception("No valid Nanoleaf device found on IP: " + self.ip)
-
 
 
     def __error_check(self, code):
@@ -81,51 +83,78 @@ class Nanoleaf():
             else:
                 return False
 
-    def generate_auth_token(self):
-        """Generates authentication token for device
+
+    def create_auth_token(self):
+        """Creates or retrives the device authentication token
 
         The power button on the device should be held for 5-7 seconds, then
         this method should be run. This will set both the auth_token and url
-        instance variables. The authentication token printed in the console
-        should be stored for use in own program and future instances of this
-        class should initalised using this.
+        instance variables, and save the token in a file for future instances
+        of the Nanoleaf object.
 
-        :returns: True if successful, otherwise False
+        :returns: Token if successful, None if not.
         """
-        url = "http://" + self.ip + ":16021/api/v1/new"
-        r = requests.post(url)
-        if r.status_code == 200:
-            self.auth_token = json.loads(r.text)['auth_token']
-            print("Auth token successfully generated! Token: " + self.auth_token)
-            self.url = "http://" + self.ip + ":16021/api/v1/" + str(self.auth_token)
-            return True
-        else:
-            return self.__error_check(r.status_code)
+        file_path = os.path.expanduser('~') + os.path.sep + '.nanoleaf_token'
+        if os.path.exists(file_path) is False:
+            open(file_path, 'w')
+        token = open(file_path, 'r').read()
+        if token:
+            return token
+
+        response = requests.post('http://' + self.ip + ':16021/api/v1/new')
+
+        # process response
+        if response and response.status_code == 200:
+            data = json.loads(response.text)
+
+            if 'auth_token' in data:
+                open(file_path, 'w').write(data['auth_token'])
+                return data['auth_token']
+        return None
 
 
-    def delete_user(self, auth_token):
+    def delete_auth_token(self, auth_token=None):
         """Deletes an authentication token
 
-        Deletes an authentication token. This token can no longer be used
-        as part of an API call to control the device. If required, generate
-        a new one using generate_auth_token().
+        Deletes an authentication token and the .nanoleaf_token file if it contains the auth token to delete. 
+        This token can no longer be used as part of an API call to control the device. If required, generate 
+        a new one using create_auth_token().
 
-        :param auth_token: The authentication token to delete
+        :param auth_token: Optional, the authentication token to delete, otherwise delete currently initialised one
 
         :returns: True if successful, otherwise False
         """
-        url = "http://" + self.ip + ":16021/api/v1/" + str(auth_token)
+        file_path = os.path.expanduser('~') + os.path.sep + '.nanoleaf_token'
+        if os.path.exists(file_path):
+            token = open(file_path, 'r').read()
+            if (auth_token is None and self.auth_token == token) or (auth_token == token):
+                    os.remove(file_path)
+        if auth_token is None:
+            url = "http://" + self.ip + ":16021/api/v1/" + str(self.auth_token)
+        else:
+            url = "http://" + self.ip + ":16021/api/v1/" + str(auth_token)
         r = requests.delete(url)
         return self.__error_check(r.status_code)
 
-    def __check_connection(self):
+    def check_connection(self):
         """Ensures there is a valid connection"""
-        requests.get(self.url, timeout=5)
+        try:
+            requests.get(self.url, timeout=5)
+        except:
+            raise NanoleafConnectionError()
 
-    def get_panel_info(self):
+    def get_info(self):
         """Returns a dictionary of device information"""
         r = requests.get(self.url)
         return json.loads(r.text)
+
+    def get_name(self):
+        """Returns the name of the current device"""
+        return self.get_info()['name']
+
+    def get_auth_token(self):
+        """Returns the current auth token"""
+        return self.auth_token
 
     #######################################################
     ####                    POWER                      ####
@@ -463,3 +492,23 @@ class Nanoleaf():
             for msg in messages:
                 func(json.loads(str(msg)))
         return inner()
+
+
+#######################################################
+####                   ERRORS                      ####
+#######################################################
+
+class NanoleafRegistrationError(Exception):
+    """Raised when an issue during"""
+    
+    def __init__(self):
+        message = "Authentcation token generation failed. Hold the power button on your Nanoleaf device for 5-7 seconds and try again."
+        super(Exception, self).__init__(message)
+
+
+class NanoleafConnectionError(Exception):
+    """Raised when the connection to the Nanoleaf device fails."""
+    
+    def __init__(self):
+        message = "Connection to Nanoleaf device failed. Is this the correct IP?"
+        super(Exception, self).__init__(message)
