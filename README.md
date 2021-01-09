@@ -48,12 +48,15 @@ There is just one class that contains all relevant functions for controlling the
 from nanoleafapi import Nanoleaf
 ```
 
-Next, a Nanoleaf object can be created with:
+Next, a Nanoleaf object can be created with the following section of code. __IF you don't have an authentication token yet, hold the power button for 5-7 seconds on your Nanoleaf device before running the following code. This will generate a new token and save it to your user directory to use for future uses of this package.__
 
 ```py 
 nl = Nanoleaf("ip")
 ```
 
+<details>
+  <summary>Click to expand - FOR VERSIONS <= 1.1.5 ONLY</summary>
+ 
 Next, if you don't have an authentication token, hold the power button on the lights for 5-7 seconds and then run:
 
 ```py
@@ -66,6 +69,13 @@ __IMPORTANT__: Once this has been run, it will print your authentication token t
 auth_token = "XXXXXXXXXXXXXXXX"
 nl = Nanoleaf(ip, auth_token)
 ```
+
+</details>
+
+The following instructions are for versions >= 1.2.0, if you're looking for information for previous versions, click the expandable section above.
+
+
+
 You can now use the commands to control the panels as displayed in the example below.
 
 ```py
