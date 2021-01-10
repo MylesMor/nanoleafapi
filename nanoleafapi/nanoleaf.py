@@ -4,6 +4,7 @@ from sseclient import SSEClient
 from threading import Thread
 import colorsys
 import os
+from typing import Any, List, Dict, Tuple, Union, Callable
 
 # Preset colours
 RED = (255, 0, 0)
@@ -25,7 +26,7 @@ class Nanoleaf():
     :ivar print_errors: True for errors to be shown, otherwise False
     """
 
-    def __init__(self, ip, print_errors=False, auth_token=None):
+    def __init__(self, ip : str, auth_token : str =None, print_errors : bool =False):
         """Initalises Nanoleaf class with desired arguments.
 
         :param ip: The IP address of the Nanoleaf device
@@ -51,7 +52,7 @@ class Nanoleaf():
         self.already_registered = False
 
 
-    def __error_check(self, code):
+    def __error_check(self, code : int) -> bool:
         """Checks and displays error messages
 
         Determines the request status code and prints the error, if print_errors
@@ -84,7 +85,7 @@ class Nanoleaf():
                 return False
 
 
-    def create_auth_token(self):
+    def create_auth_token(self) -> Union[str, None]:
         """Creates or retrives the device authentication token
 
         The power button on the device should be held for 5-7 seconds, then
@@ -113,7 +114,7 @@ class Nanoleaf():
         return None
 
 
-    def delete_auth_token(self, auth_token=None):
+    def delete_auth_token(self, auth_token : str =None) -> bool:
         """Deletes an authentication token
 
         Deletes an authentication token and the .nanoleaf_token file if it contains the auth token to delete. 
@@ -143,24 +144,47 @@ class Nanoleaf():
         except:
             raise NanoleafConnectionError()
 
-    def get_info(self):
+    def get_info(self) -> Dict[str, Any]:
         """Returns a dictionary of device information"""
         r = requests.get(self.url)
         return json.loads(r.text)
 
-    def get_name(self):
+    def get_name(self) -> str:
         """Returns the name of the current device"""
         return self.get_info()['name']
 
-    def get_auth_token(self):
+    def get_auth_token(self) -> str:
         """Returns the current auth token"""
         return self.auth_token
+
+    def get_ids(self) -> List[int]:
+        position_data = []
+        device_ids = []
+        info_data = self.get_info()
+
+        if 'panelLayout' in info_data and 'layout' in info_data['panelLayout'] and 'positionData' in info_data['panelLayout']['layout']:
+            position_data = info_data['panelLayout']['layout']['positionData']
+        
+        # process position data
+        for data in position_data:
+            device_ids.append(data['panelId'])
+
+        return device_ids
+
+    def get_custom_base_effect(self, loop : bool =True) -> Dict[str, Any]:
+        base_effect = {
+            'command': 'display',
+            'animType': 'custom',
+            'loop': loop
+        }
+        return base_effect
+    
 
     #######################################################
     ####                    POWER                      ####
     #######################################################
 
-    def power_off(self):
+    def power_off(self) -> bool:
         """Powers off the lights
 
         :returns: True if successful, otherwise False
@@ -169,7 +193,7 @@ class Nanoleaf():
         r = requests.put(self.url + "/state", data=json.dumps(data))
         return self.__error_check(r.status_code)
 
-    def power_on(self):
+    def power_on(self) -> bool:
         """Powers on the lights
 
         :returns: True if successful, otherwise False
@@ -178,7 +202,7 @@ class Nanoleaf():
         r = requests.put(self.url + "/state", data=json.dumps(data))
         return self.__error_check(r.status_code)
 
-    def get_power(self):
+    def get_power(self) -> bool:
         """Returns the power status of the lights
 
         :returns: True if on, False if off
@@ -187,7 +211,7 @@ class Nanoleaf():
         ans = json.loads(r.text)
         return ans['value']
 
-    def toggle_power(self):
+    def toggle_power(self) -> bool:
         """Toggles the lights on/off"""
         if self.get_power():
             return self.power_off()
@@ -198,7 +222,7 @@ class Nanoleaf():
     ####                   COLOUR                      ####
     #######################################################
 
-    def set_color(self, rgb):
+    def set_color(self, rgb : Tuple[int, int, int]) -> bool:
         """Sets the colour of the lights
 
         :param rgb: Tuple in the format (r, g, b)
@@ -223,7 +247,7 @@ class Nanoleaf():
     ####               ADJUST BRIGHTNESS               ####
     #######################################################
 
-    def set_brightness(self, brightness, duration=0):
+    def set_brightness(self, brightness : int, duration : int =0) -> bool:
         """Sets the brightness of the lights
 
         :param brightness: The required brightness (between 0 and 100)
@@ -237,7 +261,7 @@ class Nanoleaf():
         r = requests.put(self.url + "/state", data=json.dumps(data))
         return self.__error_check(r.status_code)
 
-    def increment_brightness(self, brightness):
+    def increment_brightness(self, brightness : int) -> bool:
         """Increments the brightness of the lights
 
         :param brightness: How much to increment the brightness, can
@@ -249,7 +273,7 @@ class Nanoleaf():
         r = requests.put(self.url + "/state", data = json.dumps(data))
         return self.__error_check(r.status_code)
 
-    def get_brightness(self):
+    def get_brightness(self) -> int:
         """Returns the current brightness value of the lights"""
         r = requests.get(self.url + "/state/brightness")
         ans = json.loads(r.text)
@@ -259,7 +283,7 @@ class Nanoleaf():
     ####                  IDENTIFY                     ####
     #######################################################
 
-    def identify(self):
+    def identify(self) -> bool:
         """Runs the identify sequence on the lights
 
         :returns: True if successful, otherwise False
@@ -271,7 +295,7 @@ class Nanoleaf():
     ####                    HUE                        ####
     #######################################################
 
-    def set_hue(self, value):
+    def set_hue(self, value : int) -> bool:
         """Sets the hue of the lights
 
         :param value: The required hue (between 0 and 360)
@@ -284,7 +308,7 @@ class Nanoleaf():
         r = requests.put(self.url + "/state", data=json.dumps(data))
         return self.__error_check(r.status_code)
 
-    def increment_hue(self, value):
+    def increment_hue(self, value : int) -> bool:
         """Increments the hue of the lights
 
         :param value: How much to increment the hue, can also be negative
@@ -295,7 +319,7 @@ class Nanoleaf():
         r = requests.put(self.url + "/state", data=json.dumps(data))
         return self.__error_check(r.status_code)
 
-    def get_hue(self):
+    def get_hue(self) -> int:
         """Returns the current hue value of the lights"""
         r = requests.get(self.url + "/state/hue")
         ans = json.loads(r.text)
@@ -305,7 +329,7 @@ class Nanoleaf():
     ####                 SATURATION                    ####
     #######################################################
 
-    def set_saturation(self, value):
+    def set_saturation(self, value : int) -> bool:
         """Sets the saturation of the lights
 
         :param value: The required saturation (between 0 and 100)
@@ -318,7 +342,7 @@ class Nanoleaf():
         r = requests.put(self.url + "/state", data=json.dumps(data))
         return self.__error_check(r.status_code)
 
-    def increment_saturation(self, value):
+    def increment_saturation(self, value : int) -> bool:
         """Increments the saturation of the lights
 
         :param brightness: How much to increment the saturation, can also be
@@ -330,7 +354,7 @@ class Nanoleaf():
         r = requests.put(self.url + "/state", data=json.dumps(data))
         return self.__error_check(r.status_code)
 
-    def get_saturation(self):
+    def get_saturation(self) -> int:
         """Returns the current saturation value of the lights"""
         r = requests.get(self.url + "/state/sat")
         ans = json.loads(r.text)
@@ -340,7 +364,7 @@ class Nanoleaf():
     ####              COLOUR TEMPERATURE               ####
     #######################################################
 
-    def set_color_temp(self, value):
+    def set_color_temp(self, value : int) -> bool:
         """Sets the white colour temperature of the lights
 
         :param value: The required colour temperature (between 0 and 100)
@@ -353,7 +377,7 @@ class Nanoleaf():
         r = requests.put(self.url + "/state", json.dumps(data))
         return self.__error_check(r.status_code)
 
-    def increment_color_temp(self, value):
+    def increment_color_temp(self, value : int) -> bool:
         """Sets the white colour temperature of the lights
 
         :param value: How much to increment the colour temperature by, can also
@@ -365,7 +389,7 @@ class Nanoleaf():
         r = requests.put(self.url + "/state", json.dumps(data))
         return self.__error_check(r.status_code)
 
-    def get_color_temp(self):
+    def get_color_temp(self) -> int:
         """Returns the current colour temperature of the lights"""
         r = requests.get(self.url + "/state/ct")
         ans = json.loads(r.text)
@@ -375,7 +399,7 @@ class Nanoleaf():
     ####                 COLOUR MODE                   ####
     #######################################################
 
-    def get_color_mode(self):
+    def get_color_mode(self) -> str:
         """Returns the colour mode of the lights"""
         response = requests.get(self.url + "/state/colorMode")
         return json.loads(response.text)
@@ -384,7 +408,7 @@ class Nanoleaf():
     ####                   EFFECTS                     ####
     #######################################################
 
-    def get_current_effect(self):
+    def get_current_effect(self) -> str:
         """Returns the currently selected effect
 
         If the name of the effect isn't available, this will return
@@ -395,7 +419,7 @@ class Nanoleaf():
         r = requests.get(self.url + "/effects/select")
         return json.loads(r.text)
 
-    def set_effect(self, effect_name):
+    def set_effect(self, effect_name : str) -> bool:
         """Sets the effect of the lights
 
         :param effect_name: The name of the effect
@@ -406,23 +430,26 @@ class Nanoleaf():
         r = requests.put(self.url + "/effects", data=json.dumps(data))
         return self.__error_check(r.status_code)
 
-    def list_effects(self):
+    def list_effects(self) -> List[str]:
         """Returns a list of available effects"""
         r = requests.get(self.url + "/effects/effectsList")
         return json.loads(r.text)
 
-    def write_effect(self, effect_dict):
+    def write_effect(self, effect_dict : Dict['str', Any]) -> bool:
         """Writes a user-defined effect to the panels
 
         :param effect_dict: The effect dictionary in the format described here: https://forum.nanoleaf.me/docs/openapi#_u2t4jzmkp8nt
+
+        :raises NanoleafEffectCreationError: When invalid effect dictionary is provided.
+
         :returns: True if successful, otherwise False
         """
         r = requests.put(self.url + "/effects", data=json.dumps({"write": effect_dict}))
         if r.status_code == 400:
-            print("Invalid effect dictionary!")
+            raise NanoleafEffectCreationError("Invalid effect dictionary")
         return self.__error_check(r.status_code)
 
-    def effect_exists(self, effect_name):
+    def effect_exists(self, effect_name : str) -> bool:
         """Verifies whether an effect exists
 
         :param effect_name: Name of the effect to verify
@@ -434,11 +461,67 @@ class Nanoleaf():
             return True
         return False
 
+    def pulsate(self, rgb_list : List[Tuple[int, int, int]], speed : int) -> bool:
+        """Displays a pulsating effect on the device with two colours
+        
+        :param rgb_list: A list of two tuples containing RGB colours to pulsate between in the format (r, g, b).
+        :param speed: The speed of the transition between colours in seconds, with a maximum of 1 decimal place.
+
+        :raises NanoleafEffectCreationError: When an invalid rgb_list is provided.
+
+        :returns: True if the effect was created and displayed successfully, otherwise False
+        """
+        if len(rgb_list) != 2:
+            raise NanoleafEffectCreationError("There can only be two tuples in the RGB list for this effect! E.g., [(255, 0, 0), (0, 0, 0)]")
+        for tup in rgb_list:
+            if len(tup) != 3:
+                raise NanoleafEffectCreationError("There must be three values in the RGB tuple! E.g., (255, 0, 0)")
+            for colour in tup:
+                if not isinstance(colour, int):
+                    raise NanoleafEffectCreationError("All values in the tuple must be integers! E.g., (255, 0, 0)")
+                if colour < 0 or colour > 255:
+                    raise NanoleafEffectCreationError("All values in the tuple must be integers between 0 and 255! E.g., (255, 0, 0)")
+        base_effect = self.get_custom_base_effect()
+        ids = self.get_ids()
+        anim_data = str(len(ids))
+        frame_string = ""
+        for id in ids:
+            frame_string += " {id} 2".format(id=id)
+            for rgb in rgb_list:
+                r, g, b = rgb[0], rgb[1], rgb[2]
+                frame_string += " {r} {g} {b} 0 {speed}".format(r=r, g=g, b=b, speed=int(speed*10))
+        base_effect['animData'] = anim_data + frame_string
+        return self.write_effect(base_effect)
+
+    def spectrum(self, speed : int) -> bool:
+        """Displays a spectrum cycling effect on the device
+        
+        :param speed: The speed of the transition between colours in seconds, with a maximum of 1 decimal place.
+
+        :returns: True if the effect was created and displayed successfully, otherwise False
+        """
+        base_effect = self.get_custom_base_effect()
+        ids = self.get_ids()
+        spectrum_palette = []
+        for hue in range(0, 360, 10):
+            (r, g, b) = colorsys.hsv_to_rgb(hue/360, 1.0, 1.0)
+            spectrum_palette.append((int(255*r), int(255*g), int(255*b)))
+        anim_data = str(len(ids))
+        frame_string = ""
+        for id in ids:
+            frame_string += " {id} {numFrames}".format(id=id, numFrames=len(spectrum_palette))
+            for rgb in spectrum_palette:
+                r, g, b = rgb[0], rgb[1], rgb[2]
+                frame_string += " {r} {g} {b} 0 {speed}".format(r=r, g=g, b=b, speed=int(speed*10))
+        base_effect['animData'] = anim_data + frame_string
+        print(base_effect)
+        return self.write_effect(base_effect)        
+
     #######################################################
     ####                  LAYOUT                       ####
     #######################################################
 
-    def get_layout(self):
+    def get_layout(self) : Dict[str, Any]:
         """Returns the device layout information"""
         r = requests.get(self.url + "/panelLayout/layout")
         return json.loads(r.text)
@@ -447,7 +530,7 @@ class Nanoleaf():
     ####                  EVENTS                       ####
     #######################################################
 
-    def register_event(self, func, event_types):
+    def register_event(self, func : Callable[dict], event_types : List[int]):
         """Starts a thread to register and listen for events
 
         Creates an event listener. This method can only be called once per
@@ -511,4 +594,11 @@ class NanoleafConnectionError(Exception):
     
     def __init__(self):
         message = "Connection to Nanoleaf device failed. Is this the correct IP?"
+        super(Exception, self).__init__(message)
+
+
+class NanoleafEffectCreationError(Exception):
+    """Raised when one of the custom effects creation has incorrect arguments."""
+    
+    def __init__(self, message):
         super(Exception, self).__init__(message)
