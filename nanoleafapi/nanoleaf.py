@@ -4,7 +4,7 @@ from sseclient import SSEClient
 from threading import Thread
 import colorsys
 import os
-from typing import Any, List, Dict, Tuple, Union, Callable
+from typing import Any, List, Dict, Tuple, Union, Callable, Optional
 
 # Preset colours
 RED = (255, 0, 0)
@@ -137,7 +137,7 @@ class Nanoleaf():
         r = requests.delete(url)
         return self.__error_check(r.status_code)
 
-    def check_connection(self):
+    def check_connection(self) -> None:
         """Ensures there is a valid connection"""
         try:
             requests.get(self.url, timeout=5)
@@ -461,37 +461,65 @@ class Nanoleaf():
             return True
         return False
 
-    def pulsate(self, rgb_list : List[Tuple[int, int, int]], speed : int) -> bool:
+    def pulsate(self, rgb : List[Tuple[int, int, int]], speed : int) -> bool:
         """Displays a pulsating effect on the device with two colours
         
-        :param rgb_list: A list of two tuples containing RGB colours to pulsate between in the format (r, g, b).
+        :param rgb: A tuple containing the RGB colour to pulsate in the format (r, g, b).
         :param speed: The speed of the transition between colours in seconds, with a maximum of 1 decimal place.
 
-        :raises NanoleafEffectCreationError: When an invalid rgb_list is provided.
+        :raises NanoleafEffectCreationError: When an invalid rgb value is provided.
 
         :returns: True if the effect was created and displayed successfully, otherwise False
         """
-        if len(rgb_list) != 2:
-            raise NanoleafEffectCreationError("There can only be two tuples in the RGB list for this effect! E.g., [(255, 0, 0), (0, 0, 0)]")
-        for tup in rgb_list:
-            if len(tup) != 3:
-                raise NanoleafEffectCreationError("There must be three values in the RGB tuple! E.g., (255, 0, 0)")
-            for colour in tup:
-                if not isinstance(colour, int):
-                    raise NanoleafEffectCreationError("All values in the tuple must be integers! E.g., (255, 0, 0)")
-                if colour < 0 or colour > 255:
-                    raise NanoleafEffectCreationError("All values in the tuple must be integers between 0 and 255! E.g., (255, 0, 0)")
+        if len(rgb) != 3:
+            raise NanoleafEffectCreationError("There must be three values in the RGB tuple! E.g., (255, 0, 0)")
+        for colour in rgb:
+            if not isinstance(colour, int):
+                raise NanoleafEffectCreationError("All values in the tuple must be integers! E.g., (255, 0, 0)")
+            if colour < 0 or colour > 255:
+                raise NanoleafEffectCreationError("All values in the tuple must be integers between 0 and 255! E.g., (255, 0, 0)")
         base_effect = self.get_custom_base_effect()
         ids = self.get_ids()
         anim_data = str(len(ids))
         frame_string = ""
         for id in ids:
             frame_string += " {id} 2".format(id=id)
-            for rgb in rgb_list:
-                r, g, b = rgb[0], rgb[1], rgb[2]
-                frame_string += " {r} {g} {b} 0 {speed}".format(r=r, g=g, b=b, speed=int(speed*10))
+            r, g, b = rgb[0], rgb[1], rgb[2]
+            frame_string += " {r} {g} {b} 0 {speed}".format(r=r, g=g, b=b, speed=int(speed*10))
         base_effect['animData'] = anim_data + frame_string
         return self.write_effect(base_effect)
+
+        def flow(self, rgb_list : List[Tuple[int, int, int]], speed : int) -> bool:
+            """Displays a sequence of specified colours on the device.
+            
+            :param rgb: A list of tuples containing RGB colours to flow between in the format (r, g, b).
+            :param speed: The speed of the transition between colours in seconds, with a maximum of 1 decimal place.
+
+            :raises NanoleafEffectCreationError: When an invalid rgb_list is provided.
+
+            :returns: True if the effect was created and displayed successfully, otherwise False
+            """
+            if len(rgb_list) <= 1:
+                raise NanoleafEffectCreationError("There has to be more than one tuple in the RGB list for this effect! E.g., [(255, 0, 0), (0, 0, 0)]")
+            for tup in rgb_list:
+                if len(tup) != 3:
+                    raise NanoleafEffectCreationError("There must be three values in the RGB tuple! E.g., (255, 0, 0)")
+                for colour in tup:
+                    if not isinstance(colour, int):
+                        raise NanoleafEffectCreationError("All values in the tuple must be integers! E.g., (255, 0, 0)")
+                    if colour < 0 or colour > 255:
+                        raise NanoleafEffectCreationError("All values in the tuple must be integers between 0 and 255! E.g., (255, 0, 0)")
+            base_effect = self.get_custom_base_effect()
+            ids = self.get_ids()
+            anim_data = str(len(ids))
+            frame_string = ""
+            for id in ids:
+                frame_string += " {id} {numFrames}".format(id=id, numFrames=len(rgb_list))
+                for rgb in rgb_list:
+                    r, g, b = rgb[0], rgb[1], rgb[2]
+                    frame_string += " {r} {g} {b} 0 {speed}".format(r=r, g=g, b=b, speed=int(speed*10))
+            base_effect['animData'] = anim_data + frame_string
+            return self.write_effect(base_effect)
 
     def spectrum(self, speed : int) -> bool:
         """Displays a spectrum cycling effect on the device
@@ -514,14 +542,13 @@ class Nanoleaf():
                 r, g, b = rgb[0], rgb[1], rgb[2]
                 frame_string += " {r} {g} {b} 0 {speed}".format(r=r, g=g, b=b, speed=int(speed*10))
         base_effect['animData'] = anim_data + frame_string
-        print(base_effect)
         return self.write_effect(base_effect)        
 
     #######################################################
     ####                  LAYOUT                       ####
     #######################################################
 
-    def get_layout(self) : Dict[str, Any]:
+    def get_layout(self) -> Dict[str, Any]:
         """Returns the device layout information"""
         r = requests.get(self.url + "/panelLayout/layout")
         return json.loads(r.text)
@@ -530,7 +557,7 @@ class Nanoleaf():
     ####                  EVENTS                       ####
     #######################################################
 
-    def register_event(self, func : Callable[dict], event_types : List[int]):
+    def register_event(self, func : Callable[[Dict[str, Any]], Any], event_types : List[int]) -> None:
         """Starts a thread to register and listen for events
 
         Creates an event listener. This method can only be called once per
@@ -560,17 +587,18 @@ class Nanoleaf():
         t = Thread(target=self.__event_listener, args=(func, set(event_types)))
         t.start()
 
-    def __event_listener(self, func, event_types):
+    def __event_listener(self, func : Callable[[Dict[str, Any]], Any], event_types : List[int]) -> Callable[[], Any]:
         """Listens for events and passes event data to the user-defined
         function."""
-        def inner():
+        def inner() -> Optional[Callable[[], Any]]:
             url = self.url + "/events?id="
             for e in event_types:
                 url += str(e) + ","
             try:
                 messages = SSEClient(url[:-1])
             except Exception as e:
-                print("Events stream failed.")
+                if self.print_errors:
+                    print("Events stream failed.")
                 return inner()
             for msg in messages:
                 func(json.loads(str(msg)))
@@ -584,7 +612,7 @@ class Nanoleaf():
 class NanoleafRegistrationError(Exception):
     """Raised when an issue during"""
     
-    def __init__(self):
+    def __init__(self) -> None:
         message = "Authentcation token generation failed. Hold the power button on your Nanoleaf device for 5-7 seconds and try again."
         super(Exception, self).__init__(message)
 
@@ -592,7 +620,7 @@ class NanoleafRegistrationError(Exception):
 class NanoleafConnectionError(Exception):
     """Raised when the connection to the Nanoleaf device fails."""
     
-    def __init__(self):
+    def __init__(self) -> None:
         message = "Connection to Nanoleaf device failed. Is this the correct IP?"
         super(Exception, self).__init__(message)
 
@@ -600,5 +628,5 @@ class NanoleafConnectionError(Exception):
 class NanoleafEffectCreationError(Exception):
     """Raised when one of the custom effects creation has incorrect arguments."""
     
-    def __init__(self, message):
+    def __init__(self, message : str) -> None:
         super(Exception, self).__init__(message)
