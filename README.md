@@ -76,8 +76,8 @@ For more in-depth documentation about this package visit: https://nanoleafapi.re
 
 #### User Management
 ```py
-create_auth_token()            # Creates an authentication token and stores it in the user's home directory. 
-delete_auth_token(auth_token)  # Deletes an authentication token from the device and the token storage file.
+create_auth_token()   # Creates an authentication token and stores it in the user's home directory. 
+delete_auth_token()   # Deletes an authentication token from the device and the token storage file.
 ```
 
 #### General
@@ -164,9 +164,9 @@ set_effect(name)        # Sets the current effect.
 
 #### Custom Effects
 ```py
-pulsate(rgb_tuple, speed)     # Displays a pulsate effect with the specified colour and speed.
-flow(rgb_tuple_list, speed)   # Displays a sequence of specified colours and speed.
-spectrum(speed)               # Displays a spectrum cycling effect with the specified speed.
+pulsate((r, g, b), speed)                  # Displays a pulsate effect with the specified colour and speed.
+flow([(r, g, b), (r, g, b), ...], speed)   # Displays a sequence of specified colours and speed.
+spectrum(speed)                            # Displays a spectrum cycling effect with the specified speed.
 ```
 
 #### Write Effect
