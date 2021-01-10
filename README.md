@@ -9,7 +9,7 @@ __Nanoleaf API__: https://forum.nanoleaf.me/docs/openapi
 
 __Detailed package documentation__: https://nanoleafapi.readthedocs.io
 
-__IMPORTANT__: As of version 1.2.0, there have been some changes in how the authentication token is generated and stored, please re-read the [Usage](#Usage) section.
+__IMPORTANT__: As of version 2.0.0, there have been some API changes relating to how the authentication token is generated and stored, please re-read the [Usage](#Usage) section.
 
 # Table of Contents
 1. [Installation](#Installation)
@@ -51,35 +51,7 @@ There is just one class that contains all relevant functions for controlling the
 from nanoleafapi import Nanoleaf
 ```
 
-<details>
-  <summary>Click to expand - FOR VERSIONS <= 1.1.5 ONLY</summary>
- 
-Next, a Nanoleaf object can be created with the following section of code:
-
-```py 
-nl = Nanoleaf("ip")
-```
-
-Next, if you don't have an authentication token, hold the power button on the lights for 5-7 seconds and then run:
-
-```py
-nl.generate_auth_token()
-```
-
-__IMPORTANT__: Once this has been run, it will print your authentication token to the console. Please save this and in future runs of your program, initialise the Nanoleaf object with the authentication token:
-
-```py 
-auth_token = "XXXXXXXXXXXXXXXX"
-nl = Nanoleaf(ip, auth_token)
-```
-
-![Example setup](https://github.com/MylesMor/nanoleafapi/blob/master/photos/nanoleafapi_example.png?raw=true)
-
-</details>
-
-The following instructions are for versions >= 1.2.0, if you're looking for information for previous versions, click the expandable section above.
-
-Next, a Nanoleaf object can be created with the following section of code. __IF you don't have an authentication token yet, hold the power button for 5-7 seconds on your Nanoleaf device before running the following code. This will generate a new token and save it to your user directory to use for future uses of this package.__
+Next, a Nanoleaf object can be created with the following line of code. __IF you don't have an authentication token yet, hold the power button for 5-7 seconds on your Nanoleaf device before running the following code. This will generate a new token and save it to your user directory to use for future uses of this package.__
 
 ```py 
 nl = Nanoleaf("ip")
@@ -88,8 +60,8 @@ nl = Nanoleaf("ip")
 You can now use the commands to control the panels as displayed in the example below.
 
 ```py
-nl.toggle_power()
-nl.set_color((255, 0, 0))            # Set colour to red
+nl.toggle_power()             # Toggle power
+nl.set_color((255, 0, 0))     # Set colour to red
 ```
 
 ![Example setup](https://github.com/MylesMor/nanoleafapi/blob/master/photos/nanoleafapi_new_example.png?raw=true)
@@ -189,6 +161,13 @@ effect_exists(name)     # Helper method which determines whether the given strin
 set_effect(name)        # Sets the current effect.
 ```
 
+#### Custom Effects
+```py
+pulsate(rgb_tuple, speed)     # Displays a pulsate effect with the specified colour and speed.
+flow(rgb_tuple_list, speed)   # Displays a sequence of specified colours and speed.
+spectrum(speed)               # Displays a spectrum cycling effect with the specified speed.
+```
+
 #### Write Effect
 ```py
 write_effect(effect_dict)    # Sets a user-created effect.
@@ -279,7 +258,7 @@ When an event occurs, the `event_function()` will run and therefore in this case
 {"events":[{"panelId":7397,"gesture":0}]}          # Example of touch event (4)
 ```
 
-#### Errors
+### Errors
 ```py
 NanoleafRegistrationError()  # Raised when token generation mode not active on device
 NanoleafConnectionError()    # Raised when there is a connection error during check_connection() method
