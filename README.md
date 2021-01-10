@@ -76,7 +76,8 @@ For more in-depth documentation about this package visit: https://nanoleafapi.re
 
 #### User Management
 ```py
-delete_auth_token(auth_token)   # Deletes an authentication token from the device and the token storage file.
+create_auth_token()            # Creates an authentication token and stores it in the user's home directory. 
+delete_auth_token(auth_token)  # Deletes an authentication token from the device and the token storage file.
 ```
 
 #### General
@@ -148,7 +149,7 @@ get_color_temp()                 # Returns current colour temperature
 ```
 
 #### Colour Mode
-Not really sure what this is for, but included it anyway.
+
 ```py
 get_color_mode()      # Returns current colour mode
 ```
@@ -216,7 +217,7 @@ effect_data = {
         }
 ```
 
-Inputting an invalid dictionary will result in the function returning False, and it printing to the console `Invalid effect dictionary!`.
+Inputting an invalid dictionary will raise a NanoleafEffectCreationError.
 
 ### Events
 Creates an event listener for the different types of events.
@@ -260,8 +261,9 @@ When an event occurs, the `event_function()` will run and therefore in this case
 
 ### Errors
 ```py
-NanoleafRegistrationError()  # Raised when token generation mode not active on device
-NanoleafConnectionError()    # Raised when there is a connection error during check_connection() method
+NanoleafRegistrationError()   # Raised when token generation mode not active on device
+NanoleafConnectionError()     # Raised when there is a connection error during check_connection() method
+NanoleafEffectCreationError() # Raised when there is an error with an effect dictionary/method arguments
 ```
 
 ## Upcoming Features
