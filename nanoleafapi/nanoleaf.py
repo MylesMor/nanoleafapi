@@ -607,8 +607,8 @@ class Nanoleaf():
             if event < 1 or event > 4:
                 raise Exception("Valid event types must be between 1-4")
         self.already_registered = True
-        t = Thread(target=self.__event_listener, args=(func, set(event_types)))
-        t.start()
+        thread = Thread(target=self.__event_listener, args=(func, set(event_types)))
+        thread.start()
 
     def __event_listener(self, func : Callable[[Dict[str, Any]], Any],
         event_types : List[int]) -> Callable[[], Any]:

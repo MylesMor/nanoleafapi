@@ -1,0 +1,24 @@
+[disable]
+
+disable =
+	bad-continuation,
+	bad-whitespace,
+	bare-except,
+	broad-except,
+	consider-using-sys-exit,
+	duplicate-code,
+	global-statement,
+	import-outside-toplevel,
+	missing-docstring,
+	protected-access,
+	unused-argument,
+	wrong-import-position,
+	unsubscriptable-object,
+	too-many-public-methods,
+
+good-names =
+	r,
+    g,
+    b,
+	ip,
+	nanoleafapi/discovery
