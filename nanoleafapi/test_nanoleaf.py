@@ -1,6 +1,6 @@
 import unittest
 import requests
-from nanoleaf import Nanoleaf, NanoleafEffectCreationError
+from nanoleafapi.nanoleaf import Nanoleaf, NanoleafEffectCreationError
 import json
 
 class TestNanoleafMethods(unittest.TestCase):
@@ -8,7 +8,7 @@ class TestNanoleafMethods(unittest.TestCase):
     @classmethod
     def setUpClass(self):
         # INSERT YOUR OWN VALUES HERE
-        ip = ''
+        ip = '192.168.1.239'
         self.nl = Nanoleaf(ip, True)
 
     def test_power_on(self):
@@ -75,11 +75,11 @@ class TestNanoleafMethods(unittest.TestCase):
     def test_set_effect(self):
         self.assertFalse(self.nl.set_effect('non-existent-effect'))
 
-    def test_get_panel_info(self):
+    def test_get_info(self):
         self.assertTrue(self.nl.get_info())
 
     def test_get_power(self):
-        self.assertTrue(str(self.nl.get_power()))
+        self.assertTrue(self.nl.get_power())
 
     def test_get_brightness(self):
         self.nl.set_brightness(100)
