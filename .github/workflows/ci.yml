@@ -13,8 +13,8 @@ jobs:
     with:
      python-version: 3.9
   - run: pip install mypy
-  - run: pip install pillow
   - run: pip install pylint
   - run: pip install requests
+  - run: pip install sseclient
   - run: pylint nanoleafapi/nanoleaf nanoleafapi/discovery
   - run: mypy nanoleafapi/nanoleaf nanoleafapi/discovery

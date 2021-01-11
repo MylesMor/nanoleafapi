@@ -21,4 +21,6 @@ good-names =
     g,
     b,
 	ip,
-	nanoleafapi/discovery
+	nanoleafapi/discovery,
+	nanoleafapi/nanoleaf
+
