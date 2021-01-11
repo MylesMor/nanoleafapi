@@ -1,6 +1,6 @@
 import unittest
 import requests
-from nanoleaf import Nanoleaf
+from nanoleaf import Nanoleaf, NanoleafEffectCreationError
 import json
 
 class TestNanoleafMethods(unittest.TestCase):
@@ -105,6 +105,15 @@ class TestNanoleafMethods(unittest.TestCase):
     def test_list_effects(self):
         self.assertTrue(self.nl.list_effects())
 
+    def test_pulsate(self):
+        self.assertTrue(self.nl.pulsate((255, 0, 0), 1))
+
+    def test_flow(self):
+        self.assertTrue(self.nl.pulsate([(255, 0, 0), (0, 255, 0)], 1))
+
+    def test_spectrum(self):
+        self.assertTrue(self.nl.pulsate(1))
+
     def test_write_effect(self):
         effect_data = {
             "command": "display",
@@ -144,7 +153,8 @@ class TestNanoleafMethods(unittest.TestCase):
             "loop": True
         }
         self.assertTrue(self.nl.write_effect(effect_data))
-        self.assertFalse(self.nl.write_effect({"invalid-string": "invalid"}))
+        with self.assertRaises(NanoleafEffectCreationError):
+            self.assertFalse(self.nl.write_effect({"invalid-string": "invalid"}))
 
     def test_effect_exists(self):
         self.assertFalse(self.nl.effect_exists('non-existent-effect'))
