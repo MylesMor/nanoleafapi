@@ -1,0 +1,20 @@
+name: ci
+
+on: [ push, pull_request ]
+
+jobs:
+ lint:
+  runs-on: ubuntu-latest
+  steps:
+  - name: Checkout
+    uses: actions/checkout@v2
+  - name: Set up Python 3.9
+    uses: actions/setup-python@v2
+    with:
+     python-version: 3.9
+  - run: pip install mypy
+  - run: pip install pillow
+  - run: pip install pylint
+  - run: pip install requests
+  - run: pylint nanoleaf.py discovery.py
+  - run: mypy nanoleaf.py discovery.py

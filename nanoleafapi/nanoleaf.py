@@ -1,10 +1,16 @@
-import requests
+"""nanoleafapi
+
+This module is a Python 3 wrapper for the Nanoleaf OpenAPI.
+It provides an easy way to use many of the functions available in the API.
+It supports the Light Panels (previously Aurora), Canvas and Shapes (including Hexgaons)."""
+
 import json
-from sseclient import SSEClient
 from threading import Thread
 import colorsys
 import os
-from typing import Any, List, Dict, Tuple, Union, Callable, Optional
+from typing import Any, List, Dict, Tuple, Union, Callable
+from sseclient import SSEClient
+import requests
 
 # Preset colours
 RED = (255, 0, 0)
@@ -63,26 +69,23 @@ class Nanoleaf():
         :returns: Returns True if request was successful, otherwise False
         """
         if self.print_errors:
-            if code == 200 or code == 204:
+            if code in (200, 204):
                 print(str(code) + ": Action performed successfully.")
                 return True
-            elif code == 400:
+            if code == 400:
                 print("Error 400: Bad request.")
             elif code == 401:
                 print("Error 401: Unauthorized, invalid auth token. " +
                     "Please generate a new one.")
             elif code == 403:
-                print("Error 403: Unauthorized, please hold the power button on the controller for 5-7 seconds, then try again.")
+                print("Error 403: Unauthorized, please hold the power " +
+                    "button on the controller for 5-7 seconds, then try again.")
             elif code == 404:
                 print("Error 404: Resource not found.")
             elif code == 500:
                 print("Error 500: Internal server error.")
             return False
-        else:
-            if code == 200 or code == 204:
-                return True
-            else:
-                return False
+        return bool(code in (200, 204))
 
 
     def create_auth_token(self) -> Union[str, None]:
@@ -117,11 +120,13 @@ class Nanoleaf():
     def delete_auth_token(self, auth_token : str =None) -> bool:
         """Deletes an authentication token
 
-        Deletes an authentication token and the .nanoleaf_token file if it contains the auth token to delete. 
-        This token can no longer be used as part of an API call to control the device. If required, generate 
+        Deletes an authentication token and the .nanoleaf_token file if it
+        contains the auth token to delete. This token can no longer be used
+        as part of an API call to control the device. If required, generate
         a new one using create_auth_token().
 
-        :param auth_token: Optional, the authentication token to delete, otherwise delete currently initialised one
+        :param auth_token: Optional, the authentication token to delete, otherwise
+            delete currently initialised one
 
         :returns: True if successful, otherwise False
         """
@@ -129,7 +134,7 @@ class Nanoleaf():
         if os.path.exists(file_path):
             token = open(file_path, 'r').read()
             if (auth_token is None and self.auth_token == token) or (auth_token == token):
-                    os.remove(file_path)
+                os.remove(file_path)
         if auth_token is None:
             url = "http://" + self.ip + ":16021/api/v1/" + str(self.auth_token)
         else:
@@ -141,8 +146,8 @@ class Nanoleaf():
         """Ensures there is a valid connection"""
         try:
             requests.get(self.url, timeout=5)
-        except:
-            raise NanoleafConnectionError()
+        except Exception as connection_error:
+            raise NanoleafConnectionError() from connection_error
 
     def get_info(self) -> Dict[str, Any]:
         """Returns a dictionary of device information"""
@@ -158,27 +163,31 @@ class Nanoleaf():
         return self.auth_token
 
     def get_ids(self) -> List[int]:
+        """Returns a list of all device ids"""
         position_data = []
         device_ids = []
         info_data = self.get_info()
 
-        if 'panelLayout' in info_data and 'layout' in info_data['panelLayout'] and 'positionData' in info_data['panelLayout']['layout']:
+        if ('panelLayout' in info_data and 'layout' in info_data['panelLayout'] and
+                'positionData' in info_data['panelLayout']['layout']):
             position_data = info_data['panelLayout']['layout']['positionData']
-        
+
         # process position data
         for data in position_data:
             device_ids.append(data['panelId'])
 
         return device_ids
 
-    def get_custom_base_effect(self, loop : bool =True) -> Dict[str, Any]:
+    @staticmethod
+    def get_custom_base_effect(loop : bool =True) -> Dict[str, Any]:
+        """Returns base custom effect dictionary"""
         base_effect = {
             'command': 'display',
             'animType': 'custom',
             'loop': loop
         }
         return base_effect
-    
+
 
     #######################################################
     ####                    POWER                      ####
@@ -215,8 +224,7 @@ class Nanoleaf():
         """Toggles the lights on/off"""
         if self.get_power():
             return self.power_off()
-        else:
-            return self.power_on()
+        return self.power_on()
 
     #######################################################
     ####                   COLOUR                      ####
@@ -438,7 +446,8 @@ class Nanoleaf():
     def write_effect(self, effect_dict : Dict['str', Any]) -> bool:
         """Writes a user-defined effect to the panels
 
-        :param effect_dict: The effect dictionary in the format described here: https://forum.nanoleaf.me/docs/openapi#_u2t4jzmkp8nt
+        :param effect_dict: The effect dictionary in the format
+            described here: https://forum.nanoleaf.me/docs/openapi#_u2t4jzmkp8nt
 
         :raises NanoleafEffectCreationError: When invalid effect dictionary is provided.
 
@@ -463,58 +472,68 @@ class Nanoleaf():
 
     def pulsate(self, rgb : Tuple[int, int, int], speed : int = 1) -> bool:
         """Displays a pulsating effect on the device with two colours
-        
+
         :param rgb: A tuple containing the RGB colour to pulsate in the format (r, g, b).
-        :param speed: The speed of the transition between colours in seconds, with a maximum of 1 decimal place.
+        :param speed: The speed of the transition between colours in seconds,
+            with a maximum of 1 decimal place.
 
         :raises NanoleafEffectCreationError: When an invalid rgb value is provided.
 
         :returns: True if the effect was created and displayed successfully, otherwise False
         """
         if len(rgb) != 3:
-            raise NanoleafEffectCreationError("There must be three values in the RGB tuple! E.g., (255, 0, 0)")
+            raise NanoleafEffectCreationError("There must be three values in the " +
+                "RGB tuple! E.g., (255, 0, 0)")
         for colour in rgb:
             if not isinstance(colour, int):
-                raise NanoleafEffectCreationError("All values in the tuple must be integers! E.g., (255, 0, 0)")
+                raise NanoleafEffectCreationError("All values in the tuple must be " +
+                    "integers! E.g., (255, 0, 0)")
             if colour < 0 or colour > 255:
-                raise NanoleafEffectCreationError("All values in the tuple must be integers between 0 and 255! E.g., (255, 0, 0)")
+                raise NanoleafEffectCreationError("All values in the tuple must be  " +
+                    "integers between 0 and 255! E.g., (255, 0, 0)")
         base_effect = self.get_custom_base_effect()
         ids = self.get_ids()
         anim_data = str(len(ids))
         frame_string = ""
-        for id in ids:
-            frame_string += " {id} 2".format(id=id)
+        for device_id in ids:
+            frame_string += " {id} 2".format(id=device_id)
             r, g, b = rgb[0], rgb[1], rgb[2]
-            frame_string += " {r} {g} {b} 0 {speed} 0 0 0 0 {speed_2}".format(r=r, g=g, b=b, speed=int(speed*10), speed_2=int(speed*10))
+            frame_string += " {r} {g} {b} 0 {speed} 0 0 0 0 {speed_2}".format(
+                    r=r, g=g, b=b, speed=int(speed*10), speed_2=int(speed*10))
         base_effect['animData'] = anim_data + frame_string
         return self.write_effect(base_effect)
 
     def flow(self, rgb_list : List[Tuple[int, int, int]], speed : int = 1) -> bool:
         """Displays a sequence of specified colours on the device.
-        
+
         :param rgb: A list of tuples containing RGB colours to flow between in the format (r, g, b).
-        :param speed: The speed of the transition between colours in seconds, with a maximum of 1 decimal place.
+        :param speed: The speed of the transition between colours in seconds, with a maximum of
+            1 decimal place.
 
         :raises NanoleafEffectCreationError: When an invalid rgb_list is provided.
 
         :returns: True if the effect was created and displayed successfully, otherwise False
         """
         if len(rgb_list) <= 1:
-            raise NanoleafEffectCreationError("There has to be more than one tuple in the RGB list for this effect! E.g., [(255, 0, 0), (0, 0, 0)]")
+            raise NanoleafEffectCreationError("There has to be more than one tuple in " +
+                "the RGB list for this effect! E.g., [(255, 0, 0), (0, 0, 0)]")
         for tup in rgb_list:
             if len(tup) != 3:
-                raise NanoleafEffectCreationError("There must be three values in the RGB tuple! E.g., (255, 0, 0)")
+                raise NanoleafEffectCreationError("There must be three values in the " +
+                    "RGB tuple! E.g., (255, 0, 0)")
             for colour in tup:
                 if not isinstance(colour, int):
-                    raise NanoleafEffectCreationError("All values in the tuple must be integers! E.g., (255, 0, 0)")
+                    raise NanoleafEffectCreationError("All values in the tuple must " +
+                        "be integers! E.g., (255, 0, 0)")
                 if colour < 0 or colour > 255:
-                    raise NanoleafEffectCreationError("All values in the tuple must be integers between 0 and 255! E.g., (255, 0, 0)")
+                    raise NanoleafEffectCreationError("All values in the tuple must " +
+                        "be integers between 0 and 255! E.g., (255, 0, 0)")
         base_effect = self.get_custom_base_effect()
         ids = self.get_ids()
         anim_data = str(len(ids))
         frame_string = ""
-        for id in ids:
-            frame_string += " {id} {numFrames}".format(id=id, numFrames=len(rgb_list))
+        for device_id in ids:
+            frame_string += " {id} {numFrames}".format(id=device_id, numFrames=len(rgb_list))
             for rgb in rgb_list:
                 r, g, b = rgb[0], rgb[1], rgb[2]
                 frame_string += " {r} {g} {b} 0 {speed}".format(r=r, g=g, b=b, speed=int(speed*10))
@@ -523,10 +542,12 @@ class Nanoleaf():
 
     def spectrum(self, speed : int = 1) -> bool:
         """Displays a spectrum cycling effect on the device
-        
-        :param speed: The speed of the transition between colours in seconds, with a maximum of 1 decimal place.
 
-        :returns: True if the effect was created and displayed successfully, otherwise False
+        :param speed: The speed of the transition between colours in seconds,
+            with a maximum of 1 decimal place.
+
+        :returns: True if the effect was created and displayed successfully,
+            otherwise False
         """
         base_effect = self.get_custom_base_effect()
         ids = self.get_ids()
@@ -536,13 +557,14 @@ class Nanoleaf():
             spectrum_palette.append((int(255*r), int(255*g), int(255*b)))
         anim_data = str(len(ids))
         frame_string = ""
-        for id in ids:
-            frame_string += " {id} {numFrames}".format(id=id, numFrames=len(spectrum_palette))
+        for device_id in ids:
+            frame_string += " {id} {numFrames}".format(id=device_id,
+                numFrames=len(spectrum_palette))
             for rgb in spectrum_palette:
                 r, g, b = rgb[0], rgb[1], rgb[2]
                 frame_string += " {r} {g} {b} 0 {speed}".format(r=r, g=g, b=b, speed=int(speed*10))
         base_effect['animData'] = anim_data + frame_string
-        return self.write_effect(base_effect)        
+        return self.write_effect(base_effect)
 
     #######################################################
     ####                  LAYOUT                       ####
@@ -557,7 +579,8 @@ class Nanoleaf():
     ####                  EVENTS                       ####
     #######################################################
 
-    def register_event(self, func : Callable[[Dict[str, Any]], Any], event_types : List[int]) -> None:
+    def register_event(self, func : Callable[[Dict[str, Any]], Any],
+        event_types : List[int]) -> None:
         """Starts a thread to register and listen for events
 
         Creates an event listener. This method can only be called once per
@@ -587,7 +610,8 @@ class Nanoleaf():
         t = Thread(target=self.__event_listener, args=(func, set(event_types)))
         t.start()
 
-    def __event_listener(self, func : Callable[[Dict[str, Any]], Any], event_types : List[int]) -> Callable[[], Any]:
+    def __event_listener(self, func : Callable[[Dict[str, Any]], Any],
+        event_types : List[int]) -> Callable[[], Any]:
         """Listens for events and passes event data to the user-defined
         function."""
         def inner() -> Callable[[], Any]:
@@ -596,7 +620,7 @@ class Nanoleaf():
                 url += str(event) + ","
             try:
                 messages = SSEClient(url[:-1])
-            except Exception as e:
+            except Exception:
                 if self.print_errors:
                     print("Events stream failed.")
                 return inner()
@@ -612,22 +636,20 @@ class Nanoleaf():
 
 class NanoleafRegistrationError(Exception):
     """Raised when an issue during"""
-    
+
     def __init__(self) -> None:
-        message = "Authentcation token generation failed. Hold the power button on your Nanoleaf device for 5-7 seconds and try again."
-        super(Exception, self).__init__(message)
+        message = """Authentication token generation failed. Hold the power
+            button on your Nanoleaf device for 5-7 seconds and try again."""
+        super().__init__(message)
 
 
 class NanoleafConnectionError(Exception):
     """Raised when the connection to the Nanoleaf device fails."""
-    
+
     def __init__(self) -> None:
         message = "Connection to Nanoleaf device failed. Is this the correct IP?"
-        super(Exception, self).__init__(message)
+        super().__init__(message)
 
 
 class NanoleafEffectCreationError(Exception):
     """Raised when one of the custom effects creation has incorrect arguments."""
-    
-    def __init__(self, message : str) -> None:
-        super(Exception, self).__init__(message)
