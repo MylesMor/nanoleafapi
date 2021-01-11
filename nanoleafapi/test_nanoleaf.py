@@ -1,6 +1,6 @@
 import unittest
 import requests
-from nanoleafapi.nanoleaf import Nanoleaf, NanoleafEffectCreationError
+from nanoleaf import Nanoleaf, NanoleafEffectCreationError
 import json
 
 class TestNanoleafMethods(unittest.TestCase):
@@ -9,7 +9,7 @@ class TestNanoleafMethods(unittest.TestCase):
     def setUpClass(self):
         # INSERT YOUR OWN VALUES HERE
         ip = '192.168.1.239'
-        self.nl = Nanoleaf(ip, True)
+        self.nl = Nanoleaf(ip, None, True)
 
     def test_power_on(self):
         self.assertTrue(self.nl.power_on())
@@ -107,12 +107,26 @@ class TestNanoleafMethods(unittest.TestCase):
 
     def test_pulsate(self):
         self.assertTrue(self.nl.pulsate((255, 0, 0), 1))
+        with self.assertRaises(NanoleafEffectCreationError):
+            self.nl.pulsate([(256, 0, 0)], 1)
+        with self.assertRaises(NanoleafEffectCreationError):
+            self.nl.pulsate([(255, 0, 0), (0, 255, 0)], 1)
+        with self.assertRaises(NanoleafEffectCreationError):
+            self.nl.pulsate([(255, 0)], 1)
+
 
     def test_flow(self):
-        self.assertTrue(self.nl.pulsate([(255, 0, 0), (0, 255, 0)], 1))
+        self.assertTrue(self.nl.flow([(255, 0, 0), (0, 255, 0)], 1))
+        with self.assertRaises(NanoleafEffectCreationError):
+            self.nl.flow([(256, 0, 0), (0, 255, 0)], 1)
+        with self.assertRaises(NanoleafEffectCreationError):
+            self.nl.flow([(255, 0)], 1)
+        with self.assertRaises(NanoleafEffectCreationError):
+            self.nl.flow([(256, 0, 0)], 1)
+
 
     def test_spectrum(self):
-        self.assertTrue(self.nl.pulsate(1))
+        self.assertTrue(self.nl.spectrum(1))
 
     def test_write_effect(self):
         effect_data = {
