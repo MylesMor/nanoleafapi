@@ -16,5 +16,5 @@ jobs:
   - run: pip install pillow
   - run: pip install pylint
   - run: pip install requests
-  - run: pylint nanoleaf.py discovery.py
-  - run: mypy nanoleaf.py discovery.py
+  - run: pylint nanoleaf discovery
+  - run: mypy nanoleaf discovery
