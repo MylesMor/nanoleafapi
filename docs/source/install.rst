@@ -30,8 +30,6 @@ There is just one class that contains all relevant functions for controlling the
 
 ``from nanoleafapi import Nanoleaf``
 
-The following instructions are for versions >= 1.2.0, if you're looking for information for previous versions, visit: https://github.com/MylesMor/nanoleafapi/blob/master/README.md#Usage
-
 Next, a Nanoleaf object can be created with the following section of code. IF you don't have an authentication token yet, hold the power button for 5-7 seconds on your Nanoleaf device before running the following code. This will generate a new token and save it to your user directory to use for future uses of this package.
 
 ``nl = Nanoleaf("ip")``
@@ -57,8 +55,8 @@ User Management
 
 .. code-block:: python
 
-  generate_auth_token()     # Generates new authentication token (hold power for 5-7 before running)
-  delete_user(auth_token)   # Deletes an authentication token from the device
+  create_auth_token()   # Creates an authentication token and stores it in the user's home directory. 
+  delete_auth_token()   # Deletes an authentication token from the device and the token storage file.
 
 
 Power
@@ -165,6 +163,16 @@ Effects
   effect_exists(name)     # Helper method which determines whether the given string exists as an effect.
   set_effect(name)        # Sets the current effect.
 
+
+Custom Effects
+~~~~~~~~~~~~~~~~~~~~~~
+
+.. code-block:: python
+
+  pulsate((r, g, b), speed)                  # Displays a pulsate effect with the specified colour and speed.
+  flow([(r, g, b), (r, g, b), ...], speed)   # Displays a sequence of specified colours and speed.
+  spectrum(speed)                            # Displays a spectrum cycling effect with the specified speed.
+
 Write Effect
 ~~~~~~~~~~~~~~~~~~~~~~
 .. code-block:: python
@@ -215,8 +223,7 @@ In future updates, I hope to add a way to make this process easier, but for now 
               "loop": True
           }
   
-
-Inputting an invalid dictionary will result in the function returning False, and it printing to the console `Invalid effect dictionary!`.
+Inputting an invalid dictionary will raise a NanoleafEffectCreationError.
 
 
 Events
@@ -270,5 +277,6 @@ Errors
 
 .. code-block:: python
 
-  NanoleafRegistrationError()  # Raised when token generation mode not active on device
-  NanoleafConnectionError()    # Raised when there is a connection error during check_connection() method
+  NanoleafRegistrationError()   # Raised when token generation mode not active on device
+  NanoleafConnectionError()     # Raised when there is a connection error during check_connection() method
+  NanoleafEffectCreationError() # Raised when there is an error with an effect dictionary/method arguments

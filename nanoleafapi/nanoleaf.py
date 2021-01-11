@@ -134,8 +134,8 @@ class Nanoleaf():
             url = "http://" + self.ip + ":16021/api/v1/" + str(self.auth_token)
         else:
             url = "http://" + self.ip + ":16021/api/v1/" + str(auth_token)
-        r = requests.delete(url)
-        return self.__error_check(r.status_code)
+        response = requests.delete(url)
+        return self.__error_check(response.status_code)
 
     def check_connection(self) -> None:
         """Ensures there is a valid connection"""
@@ -146,8 +146,8 @@ class Nanoleaf():
 
     def get_info(self) -> Dict[str, Any]:
         """Returns a dictionary of device information"""
-        r = requests.get(self.url)
-        return json.loads(r.text)
+        response = requests.get(self.url)
+        return json.loads(response.text)
 
     def get_name(self) -> str:
         """Returns the name of the current device"""
@@ -190,8 +190,8 @@ class Nanoleaf():
         :returns: True if successful, otherwise False
         """
         data = {"on" : {"value": False}}
-        r = requests.put(self.url + "/state", data=json.dumps(data))
-        return self.__error_check(r.status_code)
+        response = requests.put(self.url + "/state", data=json.dumps(data))
+        return self.__error_check(response.status_code)
 
     def power_on(self) -> bool:
         """Powers on the lights
@@ -199,16 +199,16 @@ class Nanoleaf():
         :returns: True if successful, otherwise False
         """
         data = {"on" : {"value": True}}
-        r = requests.put(self.url + "/state", data=json.dumps(data))
-        return self.__error_check(r.status_code)
+        response = requests.put(self.url + "/state", data=json.dumps(data))
+        return self.__error_check(response.status_code)
 
     def get_power(self) -> bool:
         """Returns the power status of the lights
 
         :returns: True if on, False if off
         """
-        r = requests.get(self.url + "/state/on")
-        ans = json.loads(r.text)
+        response = requests.get(self.url + "/state/on")
+        ans = json.loads(response.text)
         return ans['value']
 
     def toggle_power(self) -> bool:
@@ -230,18 +230,18 @@ class Nanoleaf():
         :returns: True if successful, otherwise False
         """
         hsv_colour = colorsys.rgb_to_hsv(rgb[0]/255, rgb[1]/255, rgb[2]/255)
-        hsv_colour = list(hsv_colour)
-        hsv_colour[0] *= 360
-        hsv_colour[1] *= 100
-        hsv_colour[2] *= 100
-        final_colour = [ int(x) for x in hsv_colour ]
+        hsv_colour_list = list(hsv_colour)
+        hsv_colour_list[0] *= 360
+        hsv_colour_list[1] *= 100
+        hsv_colour_list[2] *= 100
+        final_colour = [ int(x) for x in hsv_colour_list ]
         data = {
                     "hue" : {"value": final_colour[0]},
                     "sat": {"value": final_colour[1]},
                     "brightness": {"value": final_colour[2], "duration": 0}
                 }
-        r = requests.put(self.url + "/state", data=json.dumps(data))
-        return self.__error_check(r.status_code)
+        response = requests.put(self.url + "/state", data=json.dumps(data))
+        return self.__error_check(response.status_code)
 
     #######################################################
     ####               ADJUST BRIGHTNESS               ####
@@ -258,8 +258,8 @@ class Nanoleaf():
         if brightness > 100 or brightness < 0:
             raise ValueError('Brightness should be between 0 and 100')
         data = {"brightness" : {"value": brightness, "duration": duration}}
-        r = requests.put(self.url + "/state", data=json.dumps(data))
-        return self.__error_check(r.status_code)
+        response = requests.put(self.url + "/state", data=json.dumps(data))
+        return self.__error_check(response.status_code)
 
     def increment_brightness(self, brightness : int) -> bool:
         """Increments the brightness of the lights
@@ -270,13 +270,13 @@ class Nanoleaf():
         :returns: True if successful, otherwise False
         """
         data = {"brightness" : {"increment": brightness}}
-        r = requests.put(self.url + "/state", data = json.dumps(data))
-        return self.__error_check(r.status_code)
+        response = requests.put(self.url + "/state", data = json.dumps(data))
+        return self.__error_check(response.status_code)
 
     def get_brightness(self) -> int:
         """Returns the current brightness value of the lights"""
-        r = requests.get(self.url + "/state/brightness")
-        ans = json.loads(r.text)
+        response = requests.get(self.url + "/state/brightness")
+        ans = json.loads(response.text)
         return ans['value']
 
     #######################################################
@@ -288,8 +288,8 @@ class Nanoleaf():
 
         :returns: True if successful, otherwise False
         """
-        r = requests.put(self.url + "/identify")
-        return self.__error_check(r.status_code)
+        response = requests.put(self.url + "/identify")
+        return self.__error_check(response.status_code)
 
     #######################################################
     ####                    HUE                        ####
@@ -305,8 +305,8 @@ class Nanoleaf():
         if value > 360 or value < 0:
             raise ValueError('Hue should be between 0 and 360')
         data = {"hue" : {"value" : value}}
-        r = requests.put(self.url + "/state", data=json.dumps(data))
-        return self.__error_check(r.status_code)
+        response = requests.put(self.url + "/state", data=json.dumps(data))
+        return self.__error_check(response.status_code)
 
     def increment_hue(self, value : int) -> bool:
         """Increments the hue of the lights
@@ -316,13 +316,13 @@ class Nanoleaf():
         :returns: True if successful, otherwise False
         """
         data = {"hue" : {"increment" : value}}
-        r = requests.put(self.url + "/state", data=json.dumps(data))
-        return self.__error_check(r.status_code)
+        response = requests.put(self.url + "/state", data=json.dumps(data))
+        return self.__error_check(response.status_code)
 
     def get_hue(self) -> int:
         """Returns the current hue value of the lights"""
-        r = requests.get(self.url + "/state/hue")
-        ans = json.loads(r.text)
+        response = requests.get(self.url + "/state/hue")
+        ans = json.loads(response.text)
         return ans['value']
 
     #######################################################
@@ -339,8 +339,8 @@ class Nanoleaf():
         if value > 100 or value < 0:
             raise ValueError('Saturation should be between 0 and 100')
         data = {"sat" : {"value" : value}}
-        r = requests.put(self.url + "/state", data=json.dumps(data))
-        return self.__error_check(r.status_code)
+        response = requests.put(self.url + "/state", data=json.dumps(data))
+        return self.__error_check(response.status_code)
 
     def increment_saturation(self, value : int) -> bool:
         """Increments the saturation of the lights
@@ -351,13 +351,13 @@ class Nanoleaf():
         :returns: True if successful, otherwise False
         """
         data = {"sat" : {"increment" : value}}
-        r = requests.put(self.url + "/state", data=json.dumps(data))
-        return self.__error_check(r.status_code)
+        response = requests.put(self.url + "/state", data=json.dumps(data))
+        return self.__error_check(response.status_code)
 
     def get_saturation(self) -> int:
         """Returns the current saturation value of the lights"""
-        r = requests.get(self.url + "/state/sat")
-        ans = json.loads(r.text)
+        response = requests.get(self.url + "/state/sat")
+        ans = json.loads(response.text)
         return ans['value']
 
     #######################################################
@@ -374,8 +374,8 @@ class Nanoleaf():
         if value > 6500 or value < 1200:
             raise ValueError('Colour temp should be between 1200 and 6500')
         data = {"ct" : {"value" : value}}
-        r = requests.put(self.url + "/state", json.dumps(data))
-        return self.__error_check(r.status_code)
+        response = requests.put(self.url + "/state", json.dumps(data))
+        return self.__error_check(response.status_code)
 
     def increment_color_temp(self, value : int) -> bool:
         """Sets the white colour temperature of the lights
@@ -386,13 +386,13 @@ class Nanoleaf():
         :returns: True if successful, otherwise False
         """
         data = {"ct" : {"increment" : value}}
-        r = requests.put(self.url + "/state", json.dumps(data))
-        return self.__error_check(r.status_code)
+        response = requests.put(self.url + "/state", json.dumps(data))
+        return self.__error_check(response.status_code)
 
     def get_color_temp(self) -> int:
         """Returns the current colour temperature of the lights"""
-        r = requests.get(self.url + "/state/ct")
-        ans = json.loads(r.text)
+        response = requests.get(self.url + "/state/ct")
+        ans = json.loads(response.text)
         return ans['value']
 
     #######################################################
@@ -416,8 +416,8 @@ class Nanoleaf():
 
         :returns: Name of the effect or type if unavailable.
         """
-        r = requests.get(self.url + "/effects/select")
-        return json.loads(r.text)
+        response = requests.get(self.url + "/effects/select")
+        return json.loads(response.text)
 
     def set_effect(self, effect_name : str) -> bool:
         """Sets the effect of the lights
@@ -427,13 +427,13 @@ class Nanoleaf():
         :returns: True if successful, otherwise False
         """
         data = {"select": effect_name}
-        r = requests.put(self.url + "/effects", data=json.dumps(data))
-        return self.__error_check(r.status_code)
+        response = requests.put(self.url + "/effects", data=json.dumps(data))
+        return self.__error_check(response.status_code)
 
     def list_effects(self) -> List[str]:
         """Returns a list of available effects"""
-        r = requests.get(self.url + "/effects/effectsList")
-        return json.loads(r.text)
+        response = requests.get(self.url + "/effects/effectsList")
+        return json.loads(response.text)
 
     def write_effect(self, effect_dict : Dict['str', Any]) -> bool:
         """Writes a user-defined effect to the panels
@@ -444,10 +444,10 @@ class Nanoleaf():
 
         :returns: True if successful, otherwise False
         """
-        r = requests.put(self.url + "/effects", data=json.dumps({"write": effect_dict}))
-        if r.status_code == 400:
+        response = requests.put(self.url + "/effects", data=json.dumps({"write": effect_dict}))
+        if response.status_code == 400:
             raise NanoleafEffectCreationError("Invalid effect dictionary")
-        return self.__error_check(r.status_code)
+        return self.__error_check(response.status_code)
 
     def effect_exists(self, effect_name : str) -> bool:
         """Verifies whether an effect exists
@@ -456,12 +456,12 @@ class Nanoleaf():
 
         :returns: True if effect exists, otherwise False
         """
-        r = requests.get(self.url + "/effects/effectsList")
-        if effect_name in json.loads(r.text):
+        response = requests.get(self.url + "/effects/effectsList")
+        if effect_name in json.loads(response.text):
             return True
         return False
 
-    def pulsate(self, rgb : List[Tuple[int, int, int]], speed : int) -> bool:
+    def pulsate(self, rgb : Tuple[int, int, int], speed : int = 1) -> bool:
         """Displays a pulsating effect on the device with two colours
         
         :param rgb: A tuple containing the RGB colour to pulsate in the format (r, g, b).
@@ -485,43 +485,43 @@ class Nanoleaf():
         for id in ids:
             frame_string += " {id} 2".format(id=id)
             r, g, b = rgb[0], rgb[1], rgb[2]
-            frame_string += " {r} {g} {b} 0 {speed}".format(r=r, g=g, b=b, speed=int(speed*10))
+            frame_string += " {r} {g} {b} 0 {speed} 0 0 0 0 {speed_2}".format(r=r, g=g, b=b, speed=int(speed*10), speed_2=int(speed*10))
         base_effect['animData'] = anim_data + frame_string
         return self.write_effect(base_effect)
 
-        def flow(self, rgb_list : List[Tuple[int, int, int]], speed : int) -> bool:
-            """Displays a sequence of specified colours on the device.
-            
-            :param rgb: A list of tuples containing RGB colours to flow between in the format (r, g, b).
-            :param speed: The speed of the transition between colours in seconds, with a maximum of 1 decimal place.
+    def flow(self, rgb_list : List[Tuple[int, int, int]], speed : int = 1) -> bool:
+        """Displays a sequence of specified colours on the device.
+        
+        :param rgb: A list of tuples containing RGB colours to flow between in the format (r, g, b).
+        :param speed: The speed of the transition between colours in seconds, with a maximum of 1 decimal place.
 
-            :raises NanoleafEffectCreationError: When an invalid rgb_list is provided.
+        :raises NanoleafEffectCreationError: When an invalid rgb_list is provided.
 
-            :returns: True if the effect was created and displayed successfully, otherwise False
-            """
-            if len(rgb_list) <= 1:
-                raise NanoleafEffectCreationError("There has to be more than one tuple in the RGB list for this effect! E.g., [(255, 0, 0), (0, 0, 0)]")
-            for tup in rgb_list:
-                if len(tup) != 3:
-                    raise NanoleafEffectCreationError("There must be three values in the RGB tuple! E.g., (255, 0, 0)")
-                for colour in tup:
-                    if not isinstance(colour, int):
-                        raise NanoleafEffectCreationError("All values in the tuple must be integers! E.g., (255, 0, 0)")
-                    if colour < 0 or colour > 255:
-                        raise NanoleafEffectCreationError("All values in the tuple must be integers between 0 and 255! E.g., (255, 0, 0)")
-            base_effect = self.get_custom_base_effect()
-            ids = self.get_ids()
-            anim_data = str(len(ids))
-            frame_string = ""
-            for id in ids:
-                frame_string += " {id} {numFrames}".format(id=id, numFrames=len(rgb_list))
-                for rgb in rgb_list:
-                    r, g, b = rgb[0], rgb[1], rgb[2]
-                    frame_string += " {r} {g} {b} 0 {speed}".format(r=r, g=g, b=b, speed=int(speed*10))
-            base_effect['animData'] = anim_data + frame_string
-            return self.write_effect(base_effect)
+        :returns: True if the effect was created and displayed successfully, otherwise False
+        """
+        if len(rgb_list) <= 1:
+            raise NanoleafEffectCreationError("There has to be more than one tuple in the RGB list for this effect! E.g., [(255, 0, 0), (0, 0, 0)]")
+        for tup in rgb_list:
+            if len(tup) != 3:
+                raise NanoleafEffectCreationError("There must be three values in the RGB tuple! E.g., (255, 0, 0)")
+            for colour in tup:
+                if not isinstance(colour, int):
+                    raise NanoleafEffectCreationError("All values in the tuple must be integers! E.g., (255, 0, 0)")
+                if colour < 0 or colour > 255:
+                    raise NanoleafEffectCreationError("All values in the tuple must be integers between 0 and 255! E.g., (255, 0, 0)")
+        base_effect = self.get_custom_base_effect()
+        ids = self.get_ids()
+        anim_data = str(len(ids))
+        frame_string = ""
+        for id in ids:
+            frame_string += " {id} {numFrames}".format(id=id, numFrames=len(rgb_list))
+            for rgb in rgb_list:
+                r, g, b = rgb[0], rgb[1], rgb[2]
+                frame_string += " {r} {g} {b} 0 {speed}".format(r=r, g=g, b=b, speed=int(speed*10))
+        base_effect['animData'] = anim_data + frame_string
+        return self.write_effect(base_effect)
 
-    def spectrum(self, speed : int) -> bool:
+    def spectrum(self, speed : int = 1) -> bool:
         """Displays a spectrum cycling effect on the device
         
         :param speed: The speed of the transition between colours in seconds, with a maximum of 1 decimal place.
@@ -550,8 +550,8 @@ class Nanoleaf():
 
     def get_layout(self) -> Dict[str, Any]:
         """Returns the device layout information"""
-        r = requests.get(self.url + "/panelLayout/layout")
-        return json.loads(r.text)
+        response = requests.get(self.url + "/panelLayout/layout")
+        return json.loads(response.text)
 
     #######################################################
     ####                  EVENTS                       ####
@@ -580,8 +580,8 @@ class Nanoleaf():
         if len(event_types) > 4 or len(event_types) < 1:
             raise Exception("The number of events to register for must be" +
                 "between 1-4")
-        for e in event_types:
-            if e < 1 or e > 4:
+        for event in event_types:
+            if event < 1 or event > 4:
                 raise Exception("Valid event types must be between 1-4")
         self.already_registered = True
         t = Thread(target=self.__event_listener, args=(func, set(event_types)))
@@ -590,10 +590,10 @@ class Nanoleaf():
     def __event_listener(self, func : Callable[[Dict[str, Any]], Any], event_types : List[int]) -> Callable[[], Any]:
         """Listens for events and passes event data to the user-defined
         function."""
-        def inner() -> Optional[Callable[[], Any]]:
+        def inner() -> Callable[[], Any]:
             url = self.url + "/events?id="
-            for e in event_types:
-                url += str(e) + ","
+            for event in event_types:
+                url += str(event) + ","
             try:
                 messages = SSEClient(url[:-1])
             except Exception as e:
@@ -602,6 +602,7 @@ class Nanoleaf():
                 return inner()
             for msg in messages:
                 func(json.loads(str(msg)))
+            return inner()
         return inner()
 
 
