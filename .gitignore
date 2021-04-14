@@ -4,3 +4,5 @@
 /nanoleafapi.egg-info
 /build/*
 /.vscode
+/.mypy_cache
+/nanoleafapi/test.py
