@@ -1,15 +1,15 @@
 import unittest
-import requests
-from nanoleaf import Nanoleaf, NanoleafEffectCreationError
-import json
+from nanoleafapi.nanoleaf import Nanoleaf, NanoleafEffectCreationError
+from nanoleafapi.digital_twin import NanoleafDigitalTwin
 
 class TestNanoleafMethods(unittest.TestCase):
 
     @classmethod
     def setUpClass(self):
         # INSERT YOUR OWN VALUES HERE
-        ip = '192.168.1.239'
+        ip = '192.168.8.200'
         self.nl = Nanoleaf(ip, None, True)
+        self.digital_twin = NanoleafDigitalTwin(self.nl)
 
     def test_power_on(self):
         self.assertTrue(self.nl.power_on())
@@ -186,3 +186,29 @@ class TestNanoleafMethods(unittest.TestCase):
             self.nl.register_event(self.__helper_function, [1, 2, 3, 3, 4])
         self.nl.register_event(self.__helper_function, [1])
         self.nl.toggle_power()
+
+    def test_digital_twin_get_ids(self):
+        self.assertTrue(self.digital_twin.get_ids() == self.nl.get_ids())
+
+    def test_digital_twin_set_color(self):
+        self.digital_twin.set_color(self.digital_twin.get_ids()[0], (255, 255, 255))
+        self.assertTrue(self.digital_twin.get_color(self.digital_twin.get_ids()[0]) == (255, 255, 255))
+
+    def test_digital_twin_set_all_colors(self):
+        self.digital_twin.set_all_colors((255, 255, 255))
+        for panel_id in self.digital_twin.get_ids():
+            self.assertTrue(self.digital_twin.get_color(panel_id) == (255, 255, 255))
+        all_colours = self.digital_twin.get_all_colors()
+        for value in all_colours.values():
+            self.assertTrue(value == (255, 255, 255))
+
+    def test_digital_twin_sync(self):
+        self.digital_twin.set_all_colors((255, 255, 255))
+        self.assertTrue(self.digital_twin.sync())
+
+
+
+
+
+
+    

@@ -5,3 +5,5 @@
 /build/*
 /.vscode
 /.mypy_cache
+/nanoleafapi/test.py
+/nanoleafapi/effects_builder.py

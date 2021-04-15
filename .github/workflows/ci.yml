@@ -16,5 +16,5 @@ jobs:
   - run: pip install pylint
   - run: pip install requests
   - run: pip install sseclient
-  - run: pylint nanoleafapi/nanoleaf nanoleafapi/discovery
-  - run: mypy nanoleafapi/nanoleaf.py nanoleafapi/discovery.py
+  - run: pylint nanoleafapi/nanoleaf nanoleafapi/discovery nanoleafapi/digital_twin
+  - run: mypy nanoleafapi/nanoleaf.py nanoleafapi/discovery.py nanoleafapi/digital_twin.py

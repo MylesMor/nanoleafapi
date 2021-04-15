@@ -87,7 +87,6 @@ class Nanoleaf():
             return False
         return bool(code in (200, 204))
 
-
     def create_auth_token(self) -> Union[str, None]:
         """Creates or retrives the device authentication token
 
@@ -115,7 +114,6 @@ class Nanoleaf():
                 open(file_path, 'w').write(data['auth_token'])
                 return data['auth_token']
         return None
-
 
     def delete_auth_token(self, auth_token : str =None) -> bool:
         """Deletes an authentication token
@@ -179,12 +177,13 @@ class Nanoleaf():
         return device_ids
 
     @staticmethod
-    def get_custom_base_effect(loop : bool =True) -> Dict[str, Any]:
+    def get_custom_base_effect(anim_type : str ='custom', loop : bool =True) -> Dict[str, Any]:
         """Returns base custom effect dictionary"""
         base_effect = {
             'command': 'display',
-            'animType': 'custom',
-            'loop': loop
+            'animType': anim_type,
+            'loop': loop,
+            'palette': []
         }
         return base_effect
 
@@ -250,6 +249,7 @@ class Nanoleaf():
                 }
         response = requests.put(self.url + "/state", data=json.dumps(data))
         return self.__error_check(response.status_code)
+
 
     #######################################################
     ####               ADJUST BRIGHTNESS               ####
@@ -470,7 +470,7 @@ class Nanoleaf():
             return True
         return False
 
-    def pulsate(self, rgb : Tuple[int, int, int], speed : int = 1) -> bool:
+    def pulsate(self, rgb : Tuple[int, int, int], speed : float = 1) -> bool:
         """Displays a pulsating effect on the device with two colours
 
         :param rgb: A tuple containing the RGB colour to pulsate in the format (r, g, b).
@@ -503,7 +503,7 @@ class Nanoleaf():
         base_effect['animData'] = anim_data + frame_string
         return self.write_effect(base_effect)
 
-    def flow(self, rgb_list : List[Tuple[int, int, int]], speed : int = 1) -> bool:
+    def flow(self, rgb_list : List[Tuple[int, int, int]], speed : float = 1) -> bool:
         """Displays a sequence of specified colours on the device.
 
         :param rgb: A list of tuples containing RGB colours to flow between in the format (r, g, b).
@@ -540,7 +540,7 @@ class Nanoleaf():
         base_effect['animData'] = anim_data + frame_string
         return self.write_effect(base_effect)
 
-    def spectrum(self, speed : int = 1) -> bool:
+    def spectrum(self, speed : float = 1) -> bool:
         """Displays a spectrum cycling effect on the device
 
         :param speed: The speed of the transition between colours in seconds,
@@ -608,26 +608,19 @@ class Nanoleaf():
                 raise Exception("Valid event types must be between 1-4")
         self.already_registered = True
         thread = Thread(target=self.__event_listener, args=(func, set(event_types)))
+        thread.daemon = True
         thread.start()
 
     def __event_listener(self, func : Callable[[Dict[str, Any]], Any],
-        event_types : List[int]) -> Callable[[], Any]:
+        event_types : List[int]) -> None:
         """Listens for events and passes event data to the user-defined
         function."""
-        def inner() -> Callable[[], Any]:
-            url = self.url + "/events?id="
-            for event in event_types:
-                url += str(event) + ","
-            try:
-                messages = SSEClient(url[:-1])
-            except Exception:
-                if self.print_errors:
-                    print("Events stream failed.")
-                return inner()
-            for msg in messages:
-                func(json.loads(str(msg)))
-            return inner()
-        return inner()
+        url = self.url + "/events?id="
+        for event in event_types:
+            url += str(event) + ","
+        client = SSEClient(url[:-1])
+        for event in client:
+            func(json.loads(str(event)))
 
 
 #######################################################
@@ -635,7 +628,7 @@ class Nanoleaf():
 #######################################################
 
 class NanoleafRegistrationError(Exception):
-    """Raised when an issue during"""
+    """Raised when an issue during device registration."""
 
     def __init__(self) -> None:
         message = """Authentication token generation failed. Hold the power
