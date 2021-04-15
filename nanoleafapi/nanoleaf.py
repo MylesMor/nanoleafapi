@@ -6,7 +6,6 @@ It supports the Light Panels (previously Aurora), Canvas and Shapes (including H
 
 import json
 from threading import Thread
-import multiprocessing
 import colorsys
 import os
 from typing import Any, List, Dict, Tuple, Union, Callable
@@ -87,7 +86,6 @@ class Nanoleaf():
                 print("Error 500: Internal server error.")
             return False
         return bool(code in (200, 204))
-        
 
     def create_auth_token(self) -> Union[str, None]:
         """Creates or retrives the device authentication token
