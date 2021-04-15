@@ -87,7 +87,7 @@ class NanoleafDigitalTwin():
             self.tile_dict[panel_id]['B'])
 
 
-    def get_all_colors(self) -> Dict[int, Tuple(int, int, int)]:
+    def get_all_colors(self) -> Dict[int, Tuple[int, int, int]]:
         """Returns a dictionary of all panel IDs and associated colours.
 
         :returns: Dictionary with panel IDs as keys and RGB tuples as values.
