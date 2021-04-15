@@ -9,9 +9,8 @@ class TestNanoleafMethods(unittest.TestCase):
     @classmethod
     def setUpClass(self):
         # INSERT YOUR OWN VALUES HERE
-        ip = ''
-        auth_token = ''
-        self.nl = Nanoleaf(ip, auth_token, True)
+        ip = '192.168.1.239'
+        self.nl = Nanoleaf(ip, None, True)
 
     def test_power_on(self):
         self.assertTrue(self.nl.power_on())
@@ -77,11 +76,11 @@ class TestNanoleafMethods(unittest.TestCase):
     def test_set_effect(self):
         self.assertFalse(self.nl.set_effect('non-existent-effect'))
 
-    def test_get_panel_info(self):
-        self.assertTrue(self.nl.get_panel_info())
+    def test_get_info(self):
+        self.assertTrue(self.nl.get_info())
 
     def test_get_power(self):
-        self.assertTrue(str(self.nl.get_power()))
+        self.assertTrue(self.nl.get_power())
 
     def test_get_brightness(self):
         self.nl.set_brightness(100)
@@ -106,6 +105,29 @@ class TestNanoleafMethods(unittest.TestCase):
 
     def test_list_effects(self):
         self.assertTrue(self.nl.list_effects())
+
+    def test_pulsate(self):
+        self.assertTrue(self.nl.pulsate((255, 0, 0), 1))
+        with self.assertRaises(NanoleafEffectCreationError):
+            self.nl.pulsate([(256, 0, 0)], 1)
+        with self.assertRaises(NanoleafEffectCreationError):
+            self.nl.pulsate([(255, 0, 0), (0, 255, 0)], 1)
+        with self.assertRaises(NanoleafEffectCreationError):
+            self.nl.pulsate([(255, 0)], 1)
+
+
+    def test_flow(self):
+        self.assertTrue(self.nl.flow([(255, 0, 0), (0, 255, 0)], 1))
+        with self.assertRaises(NanoleafEffectCreationError):
+            self.nl.flow([(256, 0, 0), (0, 255, 0)], 1)
+        with self.assertRaises(NanoleafEffectCreationError):
+            self.nl.flow([(255, 0)], 1)
+        with self.assertRaises(NanoleafEffectCreationError):
+            self.nl.flow([(256, 0, 0)], 1)
+
+
+    def test_spectrum(self):
+        self.assertTrue(self.nl.spectrum(1))
 
     def test_write_effect(self):
         effect_data = {
@@ -146,7 +168,8 @@ class TestNanoleafMethods(unittest.TestCase):
             "loop": True
         }
         self.assertTrue(self.nl.write_effect(effect_data))
-        self.assertFalse(self.nl.write_effect({"invalid-string": "invalid"}))
+        with self.assertRaises(NanoleafEffectCreationError):
+            self.assertFalse(self.nl.write_effect({"invalid-string": "invalid"}))
 
     def test_effect_exists(self):
         self.assertFalse(self.nl.effect_exists('non-existent-effect'))

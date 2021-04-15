@@ -291,7 +291,6 @@ Setting the colour is all managed by using an RGB tuple, in the format: `(R, G, 
 ```
 
 ### Sync
------------------
 The sync method applies the changes to the real Nanoleaf device, based on the changes made here.
 
 ```py

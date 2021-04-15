@@ -1,8 +1,12 @@
-# Module to aid with Nanoleaf discovery
+"""discovery
+
+Module to aid with Nanoleaf discovery on a network.
+"""
 
 import socket
+from typing import Dict, Optional
 
-def discover_devices(timeout=30, debug=False):
+def discover_devices(timeout : int = 30, debug : bool = False) -> Dict[Optional[str], str]:
     """
     Discovers Nanoleaf devices on the network using SSDP
 
@@ -10,7 +14,8 @@ def discover_devices(timeout=30, debug=False):
     :param debug: Prints each device string for the SSDP discovery
     :returns: Dictionary of found devices in format {name: ip}
     """
-    ssdp = "M-SEARCH * HTTP/1.1\r\nHOST: 239.255.255.250:1900\r\nMAN: \"ssdp:discover\"\r\nMX: 1\r\nST: nanoleaf:nl29\r\n\r\n"
+    ssdp = """M-SEARCH * HTTP/1.1\r\nHOST: 239.255.255.250:1900\r\nMAN:
+        \"ssdp:discover\"\r\nMX: 1\r\nST: nanoleaf:nl29\r\n\r\n"""
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.settimeout(timeout)
@@ -21,7 +26,7 @@ def discover_devices(timeout=30, debug=False):
     while True:
         try:
             data = sock.recv(1024).decode()
-        except:
+        except socket.error:
             break
         nanoleaves.append(data)
 
@@ -38,12 +43,12 @@ def discover_devices(timeout=30, debug=False):
                 try:
                     ip_string = header.split("http://")[1]
                     ip = ip_string.split(":")[0]
-                except:
+                except ValueError:
                     pass
             if "nl-devicename" in header:
                 try:
                     name = header.split("nl-devicename: ")[1]
-                except:
+                except ValueError:
                     pass
         if ip is not None:
             nanoleaf_dict[name] = ip

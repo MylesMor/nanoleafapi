@@ -87,7 +87,7 @@ class Nanoleaf():
                 print("Error 500: Internal server error.")
             return False
         return bool(code in (200, 204))
-
+        
 
     def create_auth_token(self) -> Union[str, None]:
         """Creates or retrives the device authentication token
@@ -116,7 +116,6 @@ class Nanoleaf():
                 open(file_path, 'w').write(data['auth_token'])
                 return data['auth_token']
         return None
-
 
     def delete_auth_token(self, auth_token : str =None) -> bool:
         """Deletes an authentication token
@@ -568,26 +567,6 @@ class Nanoleaf():
         base_effect['animData'] = anim_data + frame_string
         return self.write_effect(base_effect)
 
-    def touch_effect(self, effect):
-        """
-        TODO
-        """
-        plugin_dict = { "wheel": "6970681a-20b5-4c5e-8813-bdaebc4ee4fa",
-                        "flow": "027842e4-e1d6-4a4c-a731-be74a1ebd4cf",
-                        "fade": "b3fd723a-aae8-4c99-bf2b-087159e0ef53",
-                        "explode": "713518c1-d560-47db-8991-de780af71d1e",
-                        "random": "ba632d3e-9c2b-4413-a965-510c839b3f71",
-                        "highlight": "70b7c636-6bf8-491f-89c1-f4103508d642"
-                    }
-        if effect in plugin_dict:
-            base_effect = self.get_custom_base_effect('plugin')
-            base_effect['colorType'] = "HSB"
-            base_effect['version'] = "2.0"
-            base_effect['pluginType'] = "interactive"
-            base_effect['pluginUuid'] = plugin_dict[effect]
-        print(base_effect)
-        return self.write_effect(base_effect)
-
     #######################################################
     ####                  LAYOUT                       ####
     #######################################################
@@ -643,10 +622,6 @@ class Nanoleaf():
         client = SSEClient(url[:-1])
         for event in client:
             func(json.loads(str(event)))
-
-
-    def stop_event_listener(self):
-        self.already_registered = False
 
 
 #######################################################
