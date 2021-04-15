@@ -1,6 +1,7 @@
 """NanoleafDigitalTwin
 
-This module allows for the creation of a "digital twin", allowing you to make changes to individual panels and sync them to their real counterparts."""
+This module allows for the creation of a "digital twin", allowing you to
+ make changes to individual panels and sync them to their real counterparts."""
 
 from typing import Tuple, List, Dict
 from nanoleafapi.nanoleaf import NanoleafEffectCreationError, Nanoleaf
@@ -8,17 +9,16 @@ from nanoleafapi.nanoleaf import NanoleafEffectCreationError, Nanoleaf
 class NanoleafDigitalTwin():
     """Class for creating and modifying digital twins
 
-    :ivar nl: The Nanoleaf object
+    :ivar nanoleaf: The Nanoleaf object
     :ivar tile_dict: The dictionary of tiles and their associated colour
     """
 
     def __init__(self, nl : Nanoleaf) -> None:
         """Initialises a digital twin based on the Nanoleaf object provided.
 
-        :param nl: The Nanoleaf object 
-        """
+        :param nl: The Nanoleaf object"""
         ids = nl.get_ids()
-        self.nl = nl
+        self.nanoleaf = nl
         self.tile_dict = {}
         for panel_id in ids:
             self.tile_dict[panel_id] = {"R": 0, "G": 0, "B": 0, "W": 0, "T": 0}
@@ -28,8 +28,7 @@ class NanoleafDigitalTwin():
         """Sets the colour of an individual panel.
 
         :param panel_id: The ID of the panel to change the colour of
-        :param rgb: A tuple containing the RGB values of the colour to set 
-        """
+        :param rgb: A tuple containing the RGB values of the colour to set"""
         if panel_id not in self.tile_dict:
             raise NanoleafEffectCreationError("Invalid panel ID")
         if len(rgb) != 3:
@@ -50,8 +49,7 @@ class NanoleafDigitalTwin():
     def set_all_colors(self, rgb : Tuple[int, int, int]) -> None:
         """Sets the colour of all the panels.
 
-        :param rgb: A tuple containing the RGB values of the colour to set 
-        """
+        :param rgb: A tuple containing the RGB values of the colour to set"""
         if len(rgb) != 3:
             raise NanoleafEffectCreationError("There must be three values in the " +
                 "RGB tuple! E.g., (255, 0, 0)")
@@ -85,7 +83,8 @@ class NanoleafDigitalTwin():
         """
         if panel_id not in self.tile_dict:
             raise NanoleafEffectCreationError("Invalid panel ID")
-        return (self.tile_dict[panel_id]['R'], self.tile_dict[panel_id]['G'], self.tile_dict[panel_id]['B'])
+        return (self.tile_dict[panel_id]['R'], self.tile_dict[panel_id]['G'],
+            self.tile_dict[panel_id]['B'])
 
 
     def get_all_colors(self) -> Dict[int, Tuple(int, int, int)]:
@@ -105,8 +104,9 @@ class NanoleafDigitalTwin():
         """
         anim_data = str(len(self.tile_dict))
         for key, value in self.tile_dict.items():
-            anim_data += " {key} {f} {r} {g} {b} {w} {t}".format(key=str(key), f=1, r=str(value['R']),  
-                g=str(value['G']),  b=str(value['B']),  w=str(value['W']),  t=str(value['T']))
-        base_effect = self.nl.get_custom_base_effect()
+            anim_data += " {key} {f} {r} {g} {b} {w} {t}".format(key=str(key), f=1,
+                r=str(value['R']), g=str(value['G']),  b=str(value['B']),
+                w=str(value['W']),  t=str(value['T']))
+        base_effect = self.nanoleaf.get_custom_base_effect()
         base_effect['animData'] = anim_data
-        return self.nl.write_effect(base_effect)
+        return self.nanoleaf.write_effect(base_effect)
