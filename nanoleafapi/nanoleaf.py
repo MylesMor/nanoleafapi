@@ -611,7 +611,7 @@ class Nanoleaf():
         thread.start()
 
     def __event_listener(self, func : Callable[[Dict[str, Any]], Any],
-        event_types : List[int]):
+        event_types : List[int]) -> None:
         """Listens for events and passes event data to the user-defined
         function."""
         url = self.url + "/events?id="
