@@ -250,6 +250,7 @@ class Nanoleaf():
         response = requests.put(self.url + "/state", data=json.dumps(data))
         return self.__error_check(response.status_code)
 
+
     #######################################################
     ####               ADJUST BRIGHTNESS               ####
     #######################################################
