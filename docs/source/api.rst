@@ -1,5 +1,5 @@
-Documentation
-===================
+Detailed Documentation
+========================
 
 Nanoleaf
 -----------------------
@@ -12,3 +12,10 @@ Discovery
 
 .. automodule:: discovery
     :members:
+
+Digital Twin
+-----------------------
+
+.. automodule:: digital_twin
+    :members:
+

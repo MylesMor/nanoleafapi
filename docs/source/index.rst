@@ -11,4 +11,7 @@ Welcome to nanoleafapi's documentation!
    :caption: Contents:
 
    install
+   methods
+   digitaltwin
+   errors
    api

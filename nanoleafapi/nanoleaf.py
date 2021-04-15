@@ -6,6 +6,7 @@ It supports the Light Panels (previously Aurora), Canvas and Shapes (including H
 
 import json
 from threading import Thread
+import multiprocessing
 import colorsys
 import os
 from typing import Any, List, Dict, Tuple, Union, Callable
@@ -179,11 +180,11 @@ class Nanoleaf():
         return device_ids
 
     @staticmethod
-    def get_custom_base_effect(loop : bool =True) -> Dict[str, Any]:
+    def get_custom_base_effect(anim_type : str ='custom', loop : bool =True) -> Dict[str, Any]:
         """Returns base custom effect dictionary"""
         base_effect = {
             'command': 'display',
-            'animType': 'custom',
+            'animType': anim_type,
             'loop': loop,
             'palette': []
         }
@@ -471,7 +472,7 @@ class Nanoleaf():
             return True
         return False
 
-    def pulsate(self, rgb : Tuple[int, int, int], speed : int = 1) -> bool:
+    def pulsate(self, rgb : Tuple[int, int, int], speed : float = 1) -> bool:
         """Displays a pulsating effect on the device with two colours
 
         :param rgb: A tuple containing the RGB colour to pulsate in the format (r, g, b).
@@ -504,7 +505,7 @@ class Nanoleaf():
         base_effect['animData'] = anim_data + frame_string
         return self.write_effect(base_effect)
 
-    def flow(self, rgb_list : List[Tuple[int, int, int]], speed : int = 1) -> bool:
+    def flow(self, rgb_list : List[Tuple[int, int, int]], speed : float = 1) -> bool:
         """Displays a sequence of specified colours on the device.
 
         :param rgb: A list of tuples containing RGB colours to flow between in the format (r, g, b).
@@ -541,7 +542,7 @@ class Nanoleaf():
         base_effect['animData'] = anim_data + frame_string
         return self.write_effect(base_effect)
 
-    def spectrum(self, speed : int = 1) -> bool:
+    def spectrum(self, speed : float = 1) -> bool:
         """Displays a spectrum cycling effect on the device
 
         :param speed: The speed of the transition between colours in seconds,
@@ -565,6 +566,26 @@ class Nanoleaf():
                 r, g, b = rgb[0], rgb[1], rgb[2]
                 frame_string += " {r} {g} {b} 0 {speed}".format(r=r, g=g, b=b, speed=int(speed*10))
         base_effect['animData'] = anim_data + frame_string
+        return self.write_effect(base_effect)
+
+    def touch_effect(self, effect):
+        """
+        TODO
+        """
+        plugin_dict = { "wheel": "6970681a-20b5-4c5e-8813-bdaebc4ee4fa",
+                        "flow": "027842e4-e1d6-4a4c-a731-be74a1ebd4cf",
+                        "fade": "b3fd723a-aae8-4c99-bf2b-087159e0ef53",
+                        "explode": "713518c1-d560-47db-8991-de780af71d1e",
+                        "random": "ba632d3e-9c2b-4413-a965-510c839b3f71",
+                        "highlight": "70b7c636-6bf8-491f-89c1-f4103508d642"
+                    }
+        if effect in plugin_dict:
+            base_effect = self.get_custom_base_effect('plugin')
+            base_effect['colorType'] = "HSB"
+            base_effect['version'] = "2.0"
+            base_effect['pluginType'] = "interactive"
+            base_effect['pluginUuid'] = plugin_dict[effect]
+        print(base_effect)
         return self.write_effect(base_effect)
 
     #######################################################
@@ -609,26 +630,23 @@ class Nanoleaf():
                 raise Exception("Valid event types must be between 1-4")
         self.already_registered = True
         thread = Thread(target=self.__event_listener, args=(func, set(event_types)))
+        thread.daemon = True
         thread.start()
 
     def __event_listener(self, func : Callable[[Dict[str, Any]], Any],
         event_types : List[int]) -> Callable[[], Any]:
         """Listens for events and passes event data to the user-defined
         function."""
-        def inner() -> Callable[[], Any]:
-            url = self.url + "/events?id="
-            for event in event_types:
-                url += str(event) + ","
-            try:
-                messages = SSEClient(url[:-1])
-            except Exception:
-                if self.print_errors:
-                    print("Events stream failed.")
-                return inner()
-            for msg in messages:
-                func(json.loads(str(msg)))
-            return inner()
-        return inner()
+        url = self.url + "/events?id="
+        for event in event_types:
+            url += str(event) + ","
+        client = SSEClient(url[:-1])
+        for event in client:
+            func(json.loads(str(event)))
+
+
+    def stop_event_listener(self):
+        self.already_registered = False
 
 
 #######################################################
@@ -636,7 +654,7 @@ class Nanoleaf():
 #######################################################
 
 class NanoleafRegistrationError(Exception):
-    """Raised when an issue during"""
+    """Raised when an issue during device registration."""
 
     def __init__(self) -> None:
         message = """Authentication token generation failed. Hold the power

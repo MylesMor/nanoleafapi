@@ -1,14 +1,15 @@
 # nanoleafapi
 
-[![PyPI version](https://badge.fury.io/py/nanoleafapi.svg)](https://badge.fury.io/py/nanoleafapi) [![Documentation Status](https://readthedocs.org/projects/nanoleafapi/badge/?version=latest)](https://nanoleafapi.readthedocs.io/en/latest/?badge=latest)
+[![PyPI version](https://badge.fury.io/py/nanoleafapi.svg)](https://badge.fury.io/py/nanoleafapi) [![Documentation Status](https://readthedocs.org/projects/nanoleafapi/badge/?version=latest)](https://nanoleafapi.readthedocs.io/en/latest/?badge=latest) [![Downloads](https://pepy.tech/badge/nanoleafapi)](https://pepy.tech/project/nanoleafapi)
 
 
-__nanoleafapi__ is a Python 3 wrapper for the Nanoleaf OpenAPI. It provides an easy way to use many of the functions available in the API. It supports the Light Panels (previously Aurora), Canvas and Shapes (including Hexgaons).
+__nanoleafapi__ is a Python 3 wrapper for the Nanoleaf OpenAPI. It provides an easy way to use many of the functions available in the API. It supports the Light Panels (previously Aurora), Canvas and Shapes (including Hexgaons). It does **not** support the Nanoleaf Essentials range.
 
 __Nanoleaf API__: https://forum.nanoleaf.me/docs/openapi
 
 __Detailed package documentation__: https://nanoleafapi.readthedocs.io
 
+__IMPORTANT__: As of version 2.0.0, there have been some API changes relating to how the authentication token is generated and stored, please re-read the [Usage](#Usage) section.
 
 # Table of Contents
 1. [Installation](#Installation)
@@ -17,6 +18,8 @@ __Detailed package documentation__: https://nanoleafapi.readthedocs.io
    * [Methods](#Methods)
    * [Effects](#Effects)
    * [Events](#Events)
+4. [Digital Twin](#Upcoming-Features)
+5. [Errors](#Errors)
 
 ## Installation
 To install the latest stable release:
@@ -48,32 +51,20 @@ There is just one class that contains all relevant functions for controlling the
 from nanoleafapi import Nanoleaf
 ```
 
-Next, a Nanoleaf object can be created with:
+Next, a Nanoleaf object can be created with the following line of code. __IF you don't have an authentication token yet, hold the power button for 5-7 seconds on your Nanoleaf device before running the following code. This will generate a new token and save it to your user directory to use for future uses of this package.__
 
 ```py 
 nl = Nanoleaf("ip")
 ```
 
-Next, if you don't have an authentication token, hold the power button on the lights for 5-7 seconds and then run:
-
-```py
-nl.generate_auth_token()
-```
-
-__IMPORTANT__: Once this has been run, it will print your authentication token to the console. Please save this and in future runs of your program, initialise the Nanoleaf object with the authentication token:
-
-```py 
-auth_token = "XXXXXXXXXXXXXXXX"
-```
 You can now use the commands to control the panels as displayed in the example below.
 
 ```py
-nl.toggle_power()
-nl.set_color((255, 0, 0))            # Red
+nl.toggle_power()             # Toggle power
+nl.set_color((255, 0, 0))     # Set colour to red
 ```
 
-![Example setup](https://github.com/MylesMor/nanoleafapi/blob/master/photos/img1.JPG?raw=true)
-
+![Example setup](https://github.com/MylesMor/nanoleafapi/blob/master/photos/nanoleafapi_new_example.png?raw=true)
 
 ## Methods
 
@@ -85,8 +76,15 @@ For more in-depth documentation about this package visit: https://nanoleafapi.re
 
 #### User Management
 ```py
-generate_auth_token()     # Generates new authentication token (hold power for 5-7 before running)
-delete_user(auth_token)   # Deletes an authentication token from the device
+create_auth_token()   # Creates an authentication token and stores it in the user's home directory. 
+delete_auth_token()   # Deletes an authentication token from the device and the token storage file.
+```
+
+#### General
+```py
+get_info()         # Returns device information dictionary
+get_name()         # Returns the current device name
+check_connection() # Raises NanoleafConnectionError if connection fails
 ```
 
 #### Power
@@ -151,7 +149,7 @@ get_color_temp()                 # Returns current colour temperature
 ```
 
 #### Colour Mode
-Not really sure what this is for, but included it anyway.
+
 ```py
 get_color_mode()      # Returns current colour mode
 ```
@@ -162,6 +160,13 @@ get_current_effect()    # Returns either name of current effect if available or 
 list_effects()          # Returns a list of names of all available effects.
 effect_exists(name)     # Helper method which determines whether the given string exists as an effect.
 set_effect(name)        # Sets the current effect.
+```
+
+#### Custom Effects
+```py
+pulsate((r, g, b), speed)                  # Displays a pulsate effect with the specified colour and speed.
+flow([(r, g, b), (r, g, b), ...], speed)   # Displays a sequence of specified colours and speed.
+spectrum(speed)                            # Displays a spectrum cycling effect with the specified speed.
 ```
 
 #### Write Effect
@@ -212,7 +217,7 @@ effect_data = {
         }
 ```
 
-Inputting an invalid dictionary will result in the function returning False, and it printing to the console `Invalid effect dictionary!`.
+Inputting an invalid dictionary will raise a NanoleafEffectCreationError.
 
 ### Events
 Creates an event listener for the different types of events.
@@ -252,4 +257,50 @@ When an event occurs, the `event_function()` will run and therefore in this case
 {"events":[{"attr":2,"value":65}]}                 # Example of state event (1)
 {"events":[{"attr":1,"value":"Falling Whites"}]}   # Example of effects event (3)
 {"events":[{"panelId":7397,"gesture":0}]}          # Example of touch event (4)
+```
+
+## NanoleafDigitalTwin
+
+This class is used to make a digital twin (or copy) of the Nanoleaf device, allowing you to change the colour of individual tiles and then sync all the changes
+at once to the real device.
+
+To create an instance of this class, you must initialise it with a Nanoleaf object:
+
+```py
+    from nanoleafapi import Nanoleaf, NanoleafDigitalTwin
+
+    nl = Nanoleaf("192.168.0.2")
+    digital_twin = NanoleafDigitalTwin(nl)
+```
+
+### Utility
+
+```py
+    get_ids()       # Returns a list of panel IDs
+```
+
+### Colour
+
+Setting the colour is all managed by using an RGB tuple, in the format: `(R, G, B)`.
+
+```py
+    set_color(panel_id, (255, 255, 255))   # Sets the panel with specified ID to white
+    set_all_colors((255, 255, 255))        # Sets all panels to white
+    get_color(panel_id)                    # Gets the colour of a specified panel
+    get_all_colors()                       # Returns a dictionary of {panel_id: (R, G, B)}
+```
+
+### Sync
+-----------------
+The sync method applies the changes to the real Nanoleaf device, based on the changes made here.
+
+```py
+    sync()    # Syncs with the real Nanoleaf counterpart
+```
+
+## Errors
+```py
+NanoleafRegistrationError()   # Raised when token generation mode not active on device
+NanoleafConnectionError()     # Raised when there is a connection error during check_connection() method
+NanoleafEffectCreationError() # Raised when there is an error with an effect dictionary/method arguments
 ```
