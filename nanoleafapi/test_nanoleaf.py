@@ -1,6 +1,7 @@
 import unittest
 import requests
 from nanoleafapi.nanoleaf import Nanoleaf
+from nanoleafapi.digital_twin import NanoleafDigitalTwin
 import json
 
 class TestNanoleafMethods(unittest.TestCase):
@@ -163,3 +164,5 @@ class TestNanoleafMethods(unittest.TestCase):
             self.nl.register_event(self.__helper_function, [1, 2, 3, 3, 4])
         self.nl.register_event(self.__helper_function, [1])
         self.nl.toggle_power()
+
+    

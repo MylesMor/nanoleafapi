@@ -18,7 +18,7 @@ __IMPORTANT__: As of version 2.0.0, there have been some API changes relating to
    * [Methods](#Methods)
    * [Effects](#Effects)
    * [Events](#Events)
-4. [Digital Twin](#Upcoming-Features)
+4. [Digital Twins](#NanoleafDigitalTwin)
 5. [Errors](#Errors)
 
 ## Installation
