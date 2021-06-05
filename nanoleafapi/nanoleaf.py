@@ -45,6 +45,7 @@ class Nanoleaf():
         :type print_errors: bool
         """
         self.ip = ip
+        self.print_errors = print_errors
         self.url = "http://" + ip + ":16021/api/v1/" + str(auth_token)
         self.check_connection()
         if auth_token is None:
@@ -54,7 +55,6 @@ class Nanoleaf():
         else:
             self.auth_token = auth_token
         self.url = "http://" + ip + ":16021/api/v1/" + str(self.auth_token)
-        self.print_errors = print_errors
         self.already_registered = False
 
 
@@ -99,10 +99,17 @@ class Nanoleaf():
         """
         file_path = os.path.expanduser('~') + os.path.sep + '.nanoleaf_token'
         if os.path.exists(file_path) is False:
-            open(file_path, 'w')
-        token = open(file_path, 'r').read()
-        if token:
-            return token
+            f = open(file_path, 'w')
+            f.close()
+        token_file = open(file_path, 'r')
+        tokens = token_file.readlines()
+        token_file.close()
+        for token in tokens:
+            if token != "":
+                token = token.rstrip()
+                response = requests.get("http://" + self.ip + ":16021/api/v1/" + str(token))
+                if self.__error_check(response.status_code):
+                    return token
 
         response = requests.post('http://' + self.ip + ':16021/api/v1/new')
 
@@ -111,11 +118,12 @@ class Nanoleaf():
             data = json.loads(response.text)
 
             if 'auth_token' in data:
-                open(file_path, 'w').write(data['auth_token'])
+                open(file_path, 'a').write("\n" + data['auth_token'])
                 return data['auth_token']
         return None
 
-    def delete_auth_token(self, auth_token : str =None) -> bool:
+
+    def delete_auth_token(self, auth_token : str) -> bool:
         """Deletes an authentication token
 
         Deletes an authentication token and the .nanoleaf_token file if it
@@ -123,20 +131,11 @@ class Nanoleaf():
         as part of an API call to control the device. If required, generate
         a new one using create_auth_token().
 
-        :param auth_token: Optional, the authentication token to delete, otherwise
-            delete currently initialised one
+        :param auth_token: The authentication token to delete.
 
         :returns: True if successful, otherwise False
         """
-        file_path = os.path.expanduser('~') + os.path.sep + '.nanoleaf_token'
-        if os.path.exists(file_path):
-            token = open(file_path, 'r').read()
-            if (auth_token is None and self.auth_token == token) or (auth_token == token):
-                os.remove(file_path)
-        if auth_token is None:
-            url = "http://" + self.ip + ":16021/api/v1/" + str(self.auth_token)
-        else:
-            url = "http://" + self.ip + ":16021/api/v1/" + str(auth_token)
+        url = "http://" + self.ip + ":16021/api/v1/" + str(auth_token)
         response = requests.delete(url)
         return self.__error_check(response.status_code)
 
