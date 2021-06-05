@@ -99,11 +99,10 @@ class Nanoleaf():
         """
         file_path = os.path.expanduser('~') + os.path.sep + '.nanoleaf_token'
         if os.path.exists(file_path) is False:
-            f = open(file_path, 'w')
-            f.close()
-        token_file = open(file_path, 'r')
-        tokens = token_file.readlines()
-        token_file.close()
+            with open(file_path, 'w'):
+                pass
+        with open(file_path, 'r') as token_file:
+            tokens = token_file.readlines()
         for token in tokens:
             if token != "":
                 token = token.rstrip()
