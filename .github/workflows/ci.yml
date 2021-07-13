@@ -13,7 +13,7 @@ jobs:
     with:
      python-version: 3.9
   - run: pip install mypy
-  - run: mypy --install-types
+  - run: pip install types-requests
   - run: pip install pylint
   - run: pip install requests
   - run: pip install sseclient
