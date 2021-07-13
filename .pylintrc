@@ -15,6 +15,7 @@ disable =
 	wrong-import-position,
 	unsubscriptable-object,
 	too-many-public-methods,
+	unnecessary-dict-index-lookup,
 
 good-names =
 	r,
