@@ -24,7 +24,7 @@ class TestNanoleafMethods(unittest.TestCase):
     @classmethod
     def setUpClass(self):
         # INSERT YOUR OWN VALUES HERE
-        ip = '192.168.8.200'
+        ip = ''
         self.nl = Nanoleaf(ip, None, True)
         self.digital_twin = NanoleafDigitalTwin(self.nl)
 
@@ -143,7 +143,7 @@ class TestNanoleafMethods(unittest.TestCase):
         self.nl.set_hue(100)
         self.assertEqual(self.nl.get_hue(), 100)
         with ShortTimeout(self.nl), self.assertRaises(NanoleafConnectionError):
-            self.nl.get_brightness()
+            self.nl.get_hue()
 
     def test_get_saturation(self):
         self.nl.set_saturation(100)
