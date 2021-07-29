@@ -32,7 +32,8 @@ class Nanoleaf():
     :ivar print_errors: True for errors to be shown, otherwise False
     """
 
-    def __init__(self, ip : str, auth_token : str =None, print_errors : bool =False, timeout =5.0):
+    def __init__(self, ip : str, auth_token : str =None, print_errors : bool =False,
+        timeout : float=5.0):
         """Initalises Nanoleaf class with desired arguments.
 
         :param ip: The IP address of the Nanoleaf device
@@ -108,14 +109,16 @@ class Nanoleaf():
             if token != "":
                 token = token.rstrip()
                 try:
-                    response = requests.get("http://" + self.ip + ":16021/api/v1/" + str(token), timeout=self.timeout)
+                    response = requests.get("http://" + self.ip + ":16021/api/v1/" + str(token),
+                        timeout=self.timeout)
                 except Exception as connection_error:
                     raise NanoleafConnectionError() from connection_error
                 if self.__error_check(response.status_code):
                     return token
 
         try:
-            response = requests.post('http://' + self.ip + ':16021/api/v1/new', timeout=self.timeout)
+            response = requests.post('http://' + self.ip + ':16021/api/v1/new',
+                timeout=self.timeout)
         except Exception as connection_error:
             raise NanoleafConnectionError() from connection_error
 
@@ -124,7 +127,8 @@ class Nanoleaf():
             data = json.loads(response.text)
 
             if 'auth_token' in data:
-                open(file_path, 'a').write("\n" + data['auth_token'])
+                with open(file_path, 'a') as token_file:
+                    token_file.write("\n" + data['auth_token'])
                 return data['auth_token']
         return None
 
@@ -210,7 +214,8 @@ class Nanoleaf():
         """
         data = {"on" : {"value": False}}
         try:
-            response = requests.put(self.url + "/state", data=json.dumps(data), timeout=self.timeout)
+            response = requests.put(self.url + "/state", data=json.dumps(data),
+                timeout=self.timeout)
         except Exception as connection_error:
             raise NanoleafConnectionError() from connection_error
         return self.__error_check(response.status_code)
@@ -222,7 +227,8 @@ class Nanoleaf():
         """
         data = {"on" : {"value": True}}
         try:
-            response = requests.put(self.url + "/state", data=json.dumps(data), timeout=self.timeout)
+            response = requests.put(self.url + "/state", data=json.dumps(data),
+                timeout=self.timeout)
         except Exception as connection_error:
             raise NanoleafConnectionError() from connection_error
         return self.__error_check(response.status_code)
@@ -233,7 +239,8 @@ class Nanoleaf():
         :returns: True if on, False if off
         """
         try:
-            response = requests.get(self.url + "/state/on", timeout=self.timeout)
+            response = requests.get(self.url + "/state/on",
+                timeout=self.timeout)
         except Exception as connection_error:
             raise NanoleafConnectionError() from connection_error
         ans = json.loads(response.text)
@@ -268,7 +275,8 @@ class Nanoleaf():
                     "brightness": {"value": final_colour[2], "duration": 0}
                 }
         try:
-            response = requests.put(self.url + "/state", data=json.dumps(data), timeout=self.timeout)
+            response = requests.put(self.url + "/state", data=json.dumps(data),
+                timeout=self.timeout)
         except Exception as connection_error:
             raise NanoleafConnectionError() from connection_error
         return self.__error_check(response.status_code)
@@ -290,7 +298,8 @@ class Nanoleaf():
             raise ValueError('Brightness should be between 0 and 100')
         data = {"brightness" : {"value": brightness, "duration": duration}}
         try:
-            response = requests.put(self.url + "/state", data=json.dumps(data), timeout=self.timeout)
+            response = requests.put(self.url + "/state", data=json.dumps(data),
+                timeout=self.timeout)
         except Exception as connection_error:
             raise NanoleafConnectionError() from connection_error
         return self.__error_check(response.status_code)
@@ -305,7 +314,8 @@ class Nanoleaf():
         """
         data = {"brightness" : {"increment": brightness}}
         try:
-            response = requests.put(self.url + "/state", data = json.dumps(data), timeout=self.timeout)
+            response = requests.put(self.url + "/state", data = json.dumps(data),
+                timeout=self.timeout)
         except Exception as connection_error:
             raise NanoleafConnectionError() from connection_error
         return self.__error_check(response.status_code)
@@ -313,7 +323,8 @@ class Nanoleaf():
     def get_brightness(self) -> int:
         """Returns the current brightness value of the lights"""
         try:
-            response = requests.get(self.url + "/state/brightness", timeout=self.timeout)
+            response = requests.get(self.url + "/state/brightness",
+                timeout=self.timeout)
         except Exception as connection_error:
             raise NanoleafConnectionError() from connection_error
         ans = json.loads(response.text)
@@ -349,7 +360,8 @@ class Nanoleaf():
             raise ValueError('Hue should be between 0 and 360')
         data = {"hue" : {"value" : value}}
         try:
-            response = requests.put(self.url + "/state", data=json.dumps(data), timeout=self.timeout)
+            response = requests.put(self.url + "/state", data=json.dumps(data),
+                timeout=self.timeout)
         except Exception as connection_error:
             raise NanoleafConnectionError() from connection_error
         return self.__error_check(response.status_code)
@@ -363,7 +375,8 @@ class Nanoleaf():
         """
         data = {"hue" : {"increment" : value}}
         try:
-            response = requests.put(self.url + "/state", data=json.dumps(data), timeout=self.timeout)
+            response = requests.put(self.url + "/state", data=json.dumps(data),
+                timeout=self.timeout)
         except Exception as connection_error:
             raise NanoleafConnectionError() from connection_error
         return self.__error_check(response.status_code)
@@ -392,7 +405,8 @@ class Nanoleaf():
             raise ValueError('Saturation should be between 0 and 100')
         data = {"sat" : {"value" : value}}
         try:
-            response = requests.put(self.url + "/state", data=json.dumps(data), timeout=self.timeout)
+            response = requests.put(self.url + "/state", data=json.dumps(data),
+                timeout=self.timeout)
         except Exception as connection_error:
             raise NanoleafConnectionError() from connection_error
         return self.__error_check(response.status_code)
@@ -407,7 +421,8 @@ class Nanoleaf():
         """
         data = {"sat" : {"increment" : value}}
         try:
-            response = requests.put(self.url + "/state", data=json.dumps(data), timeout=self.timeout)
+            response = requests.put(self.url + "/state", data=json.dumps(data),
+                timeout=self.timeout)
         except Exception as connection_error:
             raise NanoleafConnectionError() from connection_error
         return self.__error_check(response.status_code)
@@ -504,7 +519,8 @@ class Nanoleaf():
         """
         data = {"select": effect_name}
         try:
-            response = requests.put(self.url + "/effects", data=json.dumps(data), timeout=self.timeout)
+            response = requests.put(self.url + "/effects", data=json.dumps(data),
+                timeout=self.timeout)
         except Exception as connection_error:
             raise NanoleafConnectionError() from connection_error
         return self.__error_check(response.status_code)
@@ -528,7 +544,8 @@ class Nanoleaf():
         :returns: True if successful, otherwise False
         """
         try:
-            response = requests.put(self.url + "/effects", data=json.dumps({"write": effect_dict}), timeout=self.timeout)
+            response = requests.put(self.url + "/effects", data=json.dumps({"write": effect_dict}),
+                timeout=self.timeout)
         except Exception as connection_error:
             raise NanoleafConnectionError() from connection_error
         if response.status_code == 400:
