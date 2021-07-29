@@ -12,7 +12,7 @@ class ShortTimeout():
 
     def __enter__(self):
         self.old = self.nl.timeout
-        self.nl.timeout = 0.001
+        self.nl.timeout = 0.0
 
     def __exit__(self, exception_type, exception_value, exception_traceback):
         if exception_value is not None:
