@@ -304,21 +304,21 @@ from nanoleafapi import Nanoleaf, NanoleafDigitalTwin
 import random
 
 nl = Nanoleaf("ip")
-twin = NanoleafDigitalTwin(nl)
+digital_twin = NanoleafDigitalTwin(nl)
 
 # get a list of all panels
 panels = nl.get_ids()
 
 for panel_id in panels:
     # set each panel to a random RGB value
-    twin.set_color(panel_id, (
+    digital_twin.set_color(panel_id, (
         random.randint(0,255),
         random.randint(0,255),
         random.randint(0,255),
     ))
 
 # call 'sync' to copy the "twin" state to the actual panels
-twin.sync()
+digital_twin.sync()
 ```
 
 ## Errors
