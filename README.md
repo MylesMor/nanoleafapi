@@ -276,7 +276,7 @@ To create an instance of this class, you must initialise it with a Nanoleaf obje
 ### Utility
 
 ```py
-    get_ids()       # Returns a list of panel IDs
+    nl.get_ids()       # Returns a list of panel IDs
 ```
 
 ### Colour
@@ -284,17 +284,41 @@ To create an instance of this class, you must initialise it with a Nanoleaf obje
 Setting the colour is all managed by using an RGB tuple, in the format: `(R, G, B)`.
 
 ```py
-    set_color(panel_id, (255, 255, 255))   # Sets the panel with specified ID to white
-    set_all_colors((255, 255, 255))        # Sets all panels to white
-    get_color(panel_id)                    # Gets the colour of a specified panel
-    get_all_colors()                       # Returns a dictionary of {panel_id: (R, G, B)}
+    digital_twin.set_color(panel_id, (255, 255, 255))   # Sets the panel with specified ID to white
+    digital_twin.set_all_colors((255, 255, 255))        # Sets all panels to white
+    digital_twin.get_color(panel_id)                    # Gets the colour of a specified panel
+    digital_twin.get_all_colors()                       # Returns a dictionary of {panel_id: (R, G, B)}
 ```
 
 ### Sync
 The sync method applies the changes to the real Nanoleaf device, based on the changes made here.
 
 ```py
-    sync()    # Syncs with the real Nanoleaf counterpart
+    digital_twin.sync()    # Syncs with the real Nanoleaf counterpart
+```
+
+### Full NanoleafDigitalTwin example
+
+```py
+from nanoleafapi import Nanoleaf, NanoleafDigitalTwin
+import random
+
+nl = Nanoleaf("ip")
+digital_twin = NanoleafDigitalTwin(nl)
+
+# get a list of all panels
+panels = nl.get_ids()
+
+for panel_id in panels:
+    # set each panel to a random RGB value
+    digital_twin.set_color(panel_id, (
+        random.randint(0,255),
+        random.randint(0,255),
+        random.randint(0,255),
+    ))
+
+# call 'sync' to copy the "twin" state to the actual panels
+digital_twin.sync()
 ```
 
 ## Errors
