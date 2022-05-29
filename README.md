@@ -324,6 +324,6 @@ digital_twin.sync()
 ## Errors
 ```py
 NanoleafRegistrationError()   # Raised when token generation mode not active on device
-NanoleafConnectionError()     # Raised when there is a connection error during check_connection() method
+NanoleafConnectionError()     # Raised when there is a connection error during any request
 NanoleafEffectCreationError() # Raised when there is an error with an effect dictionary/method arguments
 ```

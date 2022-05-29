@@ -60,7 +60,7 @@ class NanoleafDigitalTwin():
             if colour < 0 or colour > 255:
                 raise NanoleafEffectCreationError("All values in the tuple must be  " +
                     "integers between 0 and 255! E.g., (255, 0, 0)")
-        for key in self.tile_dict:
+        for key, _ in self.tile_dict.items():
             self.tile_dict[key]['R'] = rgb[0]
             self.tile_dict[key]['G'] = rgb[1]
             self.tile_dict[key]['B'] = rgb[2]
