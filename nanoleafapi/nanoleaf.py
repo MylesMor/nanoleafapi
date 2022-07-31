@@ -565,15 +565,15 @@ class Nanoleaf():
         return self.write_effect(base_effect)
 
     def enable_extcontrol(self) -> bool:
-    """enables the extControl UDP streaming mode
+        """Enables the extControl UDP streaming mode
 
-    :returns: True if successful, otherwise False
-    """
-    data = {"write": {"command":  "display",
-                      "animType": "extControl",
-                      "extControlVersion": "v2"}}
-    response = requests.put(self.url + "/effects", data=json.dumps(data))
-    return self.__error_check(response.status_code)
+        :returns: True if successful, otherwise False
+        """
+        data = {"write": {"command":  "display",
+                        "animType": "extControl",
+                        "extControlVersion": "v2"}}
+        response = requests.put(self.url + "/effects", data=json.dumps(data))
+        return self.__error_check(response.status_code)
     
     #######################################################
     ####                  LAYOUT                       ####

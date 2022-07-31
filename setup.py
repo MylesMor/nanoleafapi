@@ -5,11 +5,11 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="nanoleafapi",
-    version="2.1.1",
+    version="2.1.2",
     author="MylesMor",
     author_email="hello@mylesmor.dev",
     description="A Python 3 wrapper for the Nanoleaf OpenAPI, " +
-                 "for use when controlling the Light Panels, Canvas and Shapes (including Hexagons)",
+                "for use when controlling the Light Panels, Canvas and Shapes (including Hexagons)",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/MylesMor/nanoleafapi",

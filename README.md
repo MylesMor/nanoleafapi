@@ -219,6 +219,12 @@ effect_data = {
 
 Inputting an invalid dictionary will raise a NanoleafEffectCreationError.
 
+#### Enable UDP Streaming
+```py
+nl.enable_extcontrol()    # Enables UDP extControl API
+```
+This enables the UDP extControl API, which is detailed further in the [documentation](https://forum.nanoleaf.me/docs/openapi#_9gd8j3cnjaju). There is also an example provided by [@erhan-](https://www.github.com/erhan-) in their PR for adding this feature, which gives a great first example. This can be found [here](https://github.com/MylesMor/nanoleafapi/pull/15#issuecomment-1137766460).
+
 ### Events
 Creates an event listener for the different types of events.
 
