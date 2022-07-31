@@ -99,9 +99,9 @@ class Nanoleaf():
         """
         file_path = os.path.expanduser('~') + os.path.sep + '.nanoleaf_token'
         if os.path.exists(file_path) is False:
-            with open(file_path, 'w'):
+            with open(file_path, 'w', encoding='utf-8'):
                 pass
-        with open(file_path, 'r') as token_file:
+        with open(file_path, 'r', encoding='utf-8') as token_file:
             tokens = token_file.readlines()
         for token in tokens:
             if token != "":
@@ -117,7 +117,8 @@ class Nanoleaf():
             data = json.loads(response.text)
 
             if 'auth_token' in data:
-                open(file_path, 'a').write("\n" + data['auth_token'])
+                with open(file_path, 'a', encoding='utf-8') as file:
+                    file.write("\n" + data['auth_token'])
                 return data['auth_token']
         return None
 
@@ -494,10 +495,11 @@ class Nanoleaf():
         anim_data = str(len(ids))
         frame_string = ""
         for device_id in ids:
-            frame_string += " {id} 2".format(id=device_id)
+            frame_string += f" {device_id} 2"
             r, g, b = rgb[0], rgb[1], rgb[2]
-            frame_string += " {r} {g} {b} 0 {speed} 0 0 0 0 {speed_2}".format(
-                    r=r, g=g, b=b, speed=int(speed*10), speed_2=int(speed*10))
+            speed = int(speed*10)
+            speed_2 = int(speed*10)
+            frame_string += f" {r} {g} {b} 0 {speed} 0 0 0 0 {speed_2}"
         base_effect['animData'] = anim_data + frame_string
         return self.write_effect(base_effect)
 
@@ -531,10 +533,12 @@ class Nanoleaf():
         anim_data = str(len(ids))
         frame_string = ""
         for device_id in ids:
-            frame_string += " {id} {numFrames}".format(id=device_id, numFrames=len(rgb_list))
+            number_frames = len(rgb_list)
+            frame_string += f" {device_id} {number_frames}"
             for rgb in rgb_list:
                 r, g, b = rgb[0], rgb[1], rgb[2]
-                frame_string += " {r} {g} {b} 0 {speed}".format(r=r, g=g, b=b, speed=int(speed*10))
+                speed = int(speed*10)
+                frame_string += f" {r} {g} {b} 0 {speed}"
         base_effect['animData'] = anim_data + frame_string
         return self.write_effect(base_effect)
 
@@ -556,11 +560,12 @@ class Nanoleaf():
         anim_data = str(len(ids))
         frame_string = ""
         for device_id in ids:
-            frame_string += " {id} {numFrames}".format(id=device_id,
-                numFrames=len(spectrum_palette))
+            number_frames = len(spectrum_palette)
+            frame_string += f" {device_id} {number_frames}"
             for rgb in spectrum_palette:
                 r, g, b = rgb[0], rgb[1], rgb[2]
-                frame_string += " {r} {g} {b} 0 {speed}".format(r=r, g=g, b=b, speed=int(speed*10))
+                speed = int(speed*10)
+                frame_string += f" {r} {g} {b} 0 {speed}"
         base_effect['animData'] = anim_data + frame_string
         return self.write_effect(base_effect)
 
@@ -574,7 +579,7 @@ class Nanoleaf():
                         "extControlVersion": "v2"}}
         response = requests.put(self.url + "/effects", data=json.dumps(data))
         return self.__error_check(response.status_code)
-    
+
     #######################################################
     ####                  LAYOUT                       ####
     #######################################################

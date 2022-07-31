@@ -60,10 +60,10 @@ class NanoleafDigitalTwin():
             if colour < 0 or colour > 255:
                 raise NanoleafEffectCreationError("All values in the tuple must be  " +
                     "integers between 0 and 255! E.g., (255, 0, 0)")
-        for key in self.tile_dict:
-            self.tile_dict[key]['R'] = rgb[0]
-            self.tile_dict[key]['G'] = rgb[1]
-            self.tile_dict[key]['B'] = rgb[2]
+        for _, value in self.tile_dict.items():
+            value['R'] = rgb[0]
+            value['G'] = rgb[1]
+            value['B'] = rgb[2]
 
 
     def get_ids(self) -> List[int]:
@@ -103,10 +103,14 @@ class NanoleafDigitalTwin():
         :returns: True if success, otherwise False
         """
         anim_data = str(len(self.tile_dict))
+        f = 1
         for key, value in self.tile_dict.items():
-            anim_data += " {key} {f} {r} {g} {b} {w} {t}".format(key=str(key), f=1,
-                r=str(value['R']), g=str(value['G']),  b=str(value['B']),
-                w=str(value['W']),  t=str(value['T']))
+            r = value['R']
+            g = value['G']
+            b = value['B']
+            w = value['W']
+            t = value['T']
+            anim_data += f" {str(key)} {f} {r} {g} {b} {w} {t}"
         base_effect = self.nanoleaf.get_custom_base_effect()
         base_effect['animData'] = anim_data
         return self.nanoleaf.write_effect(base_effect)

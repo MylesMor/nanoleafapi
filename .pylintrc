@@ -1,26 +1,20 @@
 [disable]
 
 disable =
-	bad-continuation,
-	bad-whitespace,
-	bare-except,
-	broad-except,
-	consider-using-sys-exit,
-	duplicate-code,
-	global-statement,
-	import-outside-toplevel,
-	missing-docstring,
-	protected-access,
 	unused-argument,
-	wrong-import-position,
-	unsubscriptable-object,
+	missing-docstring,
 	too-many-public-methods,
+	redundant-unittest-assert,
+	duplicate-code
 
 good-names =
+	nl,
 	r,
     g,
     b,
 	f,
+	w,
+	t,
 	ip,
 	nanoleafapi/discovery,
 	nanoleafapi/nanoleaf,
