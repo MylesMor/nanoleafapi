@@ -1,15 +1,16 @@
 import unittest
 from nanoleafapi.nanoleaf import Nanoleaf, NanoleafEffectCreationError
 from nanoleafapi.digital_twin import NanoleafDigitalTwin
+import socket
 
 class TestNanoleafMethods(unittest.TestCase):
 
     @classmethod
-    def setUpClass(self):
+    def setUpClass(cls):
         # INSERT YOUR OWN VALUES HERE
-        ip = '192.168.8.200'
-        self.nl = Nanoleaf(ip, None, True)
-        self.digital_twin = NanoleafDigitalTwin(self.nl)
+        cls.ip = '192.168.1.70'
+        cls.nl = Nanoleaf(cls.ip, None, True)
+        cls.digital_twin = NanoleafDigitalTwin(cls.nl)
 
     def test_power_on(self):
         self.assertTrue(self.nl.power_on())
@@ -192,7 +193,9 @@ class TestNanoleafMethods(unittest.TestCase):
 
     def test_digital_twin_set_color(self):
         self.digital_twin.set_color(self.digital_twin.get_ids()[0], (255, 255, 255))
-        self.assertTrue(self.digital_twin.get_color(self.digital_twin.get_ids()[0]) == (255, 255, 255))
+        self.assertTrue(
+            self.digital_twin.get_color(self.digital_twin.get_ids()[0]) == (255, 255, 255)
+        )
 
     def test_digital_twin_set_all_colors(self):
         self.digital_twin.set_all_colors((255, 255, 255))
@@ -206,9 +209,37 @@ class TestNanoleafMethods(unittest.TestCase):
         self.digital_twin.set_all_colors((255, 255, 255))
         self.assertTrue(self.digital_twin.sync())
 
+    def test_ext_control(self):
+        nanoleaf_udp_port = 60222
+        nanoleaf_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, 0)
 
+        self.nl.enable_extcontrol()
 
+        panel_ids = self.nl.get_ids()
+        n_panels = len(panel_ids) - 1
+        n_panels_b = n_panels.to_bytes(2, "big")
 
+        send_data = b""
+        send_data += n_panels_b
+        transition = 1
+        for panel_id in panel_ids:
+            if panel_id != 0:
+                panel_id_b = panel_id.to_bytes(2, "big")
+                send_data += panel_id_b
+                white = 255
+                w = 0
+                send_data += white.to_bytes(1, "big")
+                send_data += white.to_bytes(1, "big")
+                send_data += white.to_bytes(1, "big")
+                send_data += w.to_bytes(1, "big")
+                send_data += transition.to_bytes(2, "big")
 
+        nanoleaf_socket.sendto(send_data, (self.ip, nanoleaf_udp_port))
+        nanoleaf_socket.close()
+        info = self.nl.get_info()
+        self.assertTrue(info['state']['brightness']['value'] == 100)
+        self.assertTrue(info['state']['colorMode'] == 'effect')
+        self.assertTrue(info['state']['ct']['value'] == 6500)
+        self.assertTrue(info['state']['hue']['value'] == 0)
+        self.assertTrue(info['state']['sat']['value'] == 0)
 
-    
