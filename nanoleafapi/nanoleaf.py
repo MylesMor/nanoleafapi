@@ -8,7 +8,7 @@ import json
 from threading import Thread
 import colorsys
 import os
-from typing import Any, List, Dict, Tuple, Union, Callable
+from typing import Any, List, Dict, Tuple, Union, Callable, Optional
 from sseclient import SSEClient
 import requests
 
@@ -155,8 +155,8 @@ class Nanoleaf():
         """Returns the name of the current device"""
         return self.get_info()['name']
 
-    def get_auth_token(self) -> str:
-        """Returns the current auth token"""
+    def get_auth_token(self) -> Optional[str]:
+        """Returns the current auth token or None"""
         return self.auth_token
 
     def get_ids(self) -> List[int]:
