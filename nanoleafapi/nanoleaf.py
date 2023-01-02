@@ -611,6 +611,12 @@ class Nanoleaf():
             2 = layout,
             3 = effects,
             4 = touch (Canvas only)
+        :param touch_port: Optional, can be set along with touch_func in order
+            to register to touch stream data. This is the port that the UDP
+            socket will be opened on.
+        :param touch_func: The function to run when a touch event is recieved
+            from the touch stream data. This function will recieve the event
+            as a dictionary.
         """
 
         if self.already_registered:
@@ -626,6 +632,8 @@ class Nanoleaf():
             raise Exception("No callback function was given for the touch stream data")
         if touch_port == None and touch_func != None:
             raise Exception("No port was given for the touch stream data")
+        if touch_port != None and 4 not in event_types:
+            raise Exception("The touch event must be registered in order recieve touch stream data")
         self.already_registered = True
         if touch_port != None:
             touch_thread = Thread(target=self.__touch_stream_listener, args=(touch_port, touch_func))
@@ -653,6 +661,11 @@ class Nanoleaf():
             func(json.loads(str(event)))
 
     def __touch_stream_listener(self, port : int, func : Callable[[Dict[str, Any]], Any]) -> None:
+        """Listens for touch events and passes formatted data to the user-defined
+        function."""
+        #There seems to be a value 5 for touch types that isn't in the documentation
+        #From testing it appears to be sent whenever a Tap event is sent in the SSE client
+        touch_types_map = {0:"Hover",1:"Down",2:"Hold",3:"Up",4:"Swipe",5:"Tap"}
         server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         server_socket.bind(("", port))
         data = b""
@@ -666,9 +679,21 @@ class Nanoleaf():
             while True:
                 if panels_coming > 0:
                     if len(data) >= 5:
-                        panel_data = data[0:5]
+                        raw_panel_data = data[0:5]
                         data = data[5:]
                         panels_coming -= 1
+
+                        panel_data = {}
+                        panel_data["panelId"] = int.from_bytes(raw_panel_data[0:2], "big")
+                        touch_data = raw_panel_data[2]
+                        panel_data["touchType"] = (
+                            touch_types_map[touch_data >> 4]
+                            if touch_data >> 4 in touch_types_map else
+                            "Unknown"
+                        )
+                        panel_data["touchStrength"] = touch_data & 15
+                        if panel_data["touchType"] == "Swipe":
+                            panel_data["panelIdFrom"] = int.from_bytes(raw_panel_data[3:5], "big")
                         func(panel_data)
                     else:
                         break
